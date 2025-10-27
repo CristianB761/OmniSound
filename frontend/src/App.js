@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* Barra lateral izquierda */}
+      <div>
+        <h1>OmniSound</h1>
+        <div>Buscar</div>
+        <nav>
+          <div>Para ti</div>
+          <div>Explorar</div>
+          <div>Siguiendo</div>
+          <div>Subir</div>
+          <div>Perfil</div>
+        </nav>
+        <div>Inicia sesión</div>
+        <div>Crea tu cuenta</div>
+      </div>
+
+      {/* Contenido principal */}
+      <div>
+        <h2>Para ti</h2>
+      </div>
+
+      {/* Reproductor de música (oculto por ahora) */}
+      <div style={{display: 'none'}}>
+      </div>
     </div>
   );
 }
