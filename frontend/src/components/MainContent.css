@@ -1,0 +1,20 @@
+/* Contenedor principal del contenido */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  background-color: #121212;
+  color: #fff;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+/* Título de la sección */
+.main-content-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 30px;
+  letter-spacing: 0.5px;
+}
