@@ -14,10 +14,8 @@ function App() {
       <MainContent />
       
       {/* Reproductor de música (oculto por ahora) */}
-      <div style={{display: 'none'}}>
         <MusicPlayer />
       </div>
-    </div>
   );
 }
 
