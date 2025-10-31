@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
 import MusicPlayer from './components/MusicPlayer';
 import Login from './components/Login';
+import ForgotPassword from './components/ForgotPassword';
 import './App.css';
 
 function App() {
@@ -13,6 +14,9 @@ function App() {
         <Routes>
           {/* Ruta para login (sin sidebar) */}
           <Route path="/login" element={<Login />} />
+          
+          {/* Ruta para restablecer contraseña (sin sidebar) */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           
           {/* Ruta principal (con sidebar) */}
           <Route path="/" element={

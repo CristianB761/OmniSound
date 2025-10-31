@@ -18,11 +18,16 @@ function Login() {
   // Función para validar si el botón debe estar habilitado
   const isFormValid = email.length > 0 && password.length > 0;
 
+  // Función para cerrar y volver a la sección "Para ti"
+  const handleClose = () => {
+    navigate('/'); // Redirige a la página principal (sección "Para ti")
+  };
+
   // Efecto para manejar la tecla "esc"
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        navigate(-1);
+        handleClose();
       }
     };
 
@@ -33,7 +38,7 @@ function Login() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="login-page">
@@ -41,7 +46,7 @@ function Login() {
         {/* Botón de cerrar con tooltip */}
         <button 
           className="login-close-btn tooltip-container"
-          onClick={() => navigate(-1)}
+          onClick={handleClose}
           aria-label="Cerrar"
           data-tooltip="Cerrar"
         >
@@ -94,11 +99,9 @@ function Login() {
           </div>
 
           {/* Enlace de contraseña olvidada */}
-          <div className="forgot-password-container">
-            <Link to="/forgot-password" className="forgot-password-link">
-              ¿Olvidaste la contraseña?
-            </Link>
-          </div>
+          <Link to="/forgot-password" className="forgot-password-link">
+            ¿Olvidaste la contraseña?
+          </Link>
 
           {/* Botón de envío */}
           <button
