@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Sidebar.css';
 
 function Sidebar() {
@@ -62,7 +63,7 @@ function Sidebar() {
       
       {/* Botones de autenticación */}
       <div className="sidebar-buttons">
-        <button className="sidebar-button">Inicia sesión</button>
+        <Link to="/login" className="sidebar-button">Inicia sesión</Link>
         <button className="sidebar-button sidebar-button-secondary">Crea tu cuenta</button>
       </div>
     </div>

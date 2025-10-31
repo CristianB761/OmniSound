@@ -1,0 +1,242 @@
+/* Página de login */
+.login-page {
+  min-height: 100vh;
+  background-color: #0c0c0c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+/* Contenedor del login */
+.login-container {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  border: 1px solid #2a2a2a;
+}
+
+/* Botón de cerrar */
+.login-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.login-close-btn:hover {
+  background-color: #2a2a2a;
+}
+
+/* Tooltip para el botón de cerrar */
+.login-close-btn.tooltip-container::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2a2a2a;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.login-close-btn.tooltip-container:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.5s;
+}
+
+/* Título */
+.login-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0 0 40px 0;
+  text-align: center;
+  color: #fff;
+}
+
+/* Formulario */
+.login-form {
+  width: 100%;
+}
+
+/* Grupos de input */
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  display: block;
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Campos de entrada */
+.login-input {
+  width: 100%;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: white;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.login-input::placeholder {
+  color: #888;
+}
+
+/* Contenedor de contraseña */
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input {
+  padding-right: 100px;
+}
+
+/* Botón mostrar/ocultar contraseña */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #10b981;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.password-toggle:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Enlace contraseña olvidada */
+.forgot-password-container {
+  text-align: left;
+  margin-top: -16px;
+  margin-bottom: 24px;
+}
+
+.forgot-password-link {
+  color: #10b981;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: #0da271;
+}
+
+/* Botón de envío */
+.login-submit-btn {
+  width: 100%;
+  background-color: #10b981;
+  color: #000;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 32px;
+}
+
+.login-submit-btn.active:hover {
+  background-color: #0da271;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.login-submit-btn.disabled {
+  background-color: #1a1a1a;
+  color: #666;
+  cursor: not-allowed;
+  border: 1px solid #2a2a2a;
+}
+
+/* Pie de página */
+.login-footer {
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.signup-link {
+  color: #10b981;
+  text-decoration: none;
+  margin-left: 6px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.signup-link:hover {
+  color: #0da271;
+}
+
+/* Ocultar el botón nativo de mostrar/ocultar contraseña en todos los navegadores */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-caps-lock-indicator,
+input[type="password"]::-webkit-credentials-auto-fill-button:hover {
+  background-color: transparent;
+  border: none;
+  display: none !important;
+}
+
+/* Para Firefox */
+input[type="password"]::-moz-focus-inner {
+  border: 0;
+}
+
+/* Para Internet Explorer y Edge */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
