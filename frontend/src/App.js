@@ -13,7 +13,7 @@ function App() {
       {/* Contenido principal */}
       <MainContent />
       
-      {/* Reproductor de música (oculto por ahora) */}
+      {/* Reproductor de música */}
         <MusicPlayer />
       </div>
   );

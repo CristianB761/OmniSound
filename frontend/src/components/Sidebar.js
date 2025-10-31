@@ -1,18 +1,50 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './Sidebar.css';
 
 function Sidebar() {
+  const searchInputRef = useRef(null);
+
+  // Efecto para manejar la tecla "s"
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Verificar si se presionó "s" (sin importar mayúsculas/minúsculas)
+      // Y que no esté en un campo de entrada para evitar conflictos
+      if ((event.key === 's' || event.key === 'S') && 
+          !event.target.matches('input, textarea, [contenteditable="true"]')) {
+        event.preventDefault();
+        
+        // Enfocar el campo de búsqueda
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+
+    // Agregar event listener
+    document.addEventListener('keydown', handleKeyPress);
+
+    // Limpiar event listener al desmontar
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
   return (
     <div className="sidebar">
       {/* Título de la aplicación */}
       <h1 className="sidebar-title">OmniSound</h1>
       
       {/* Barra de búsqueda */}
-      <input 
-        type="text" 
-        className="sidebar-search" 
-        placeholder="Buscar"
-      />
+      <div className="sidebar-search-container">
+        <input 
+          ref={searchInputRef}
+          type="text" 
+          className="sidebar-search" 
+          placeholder="Buscar"
+        />
+        {/* Icono temporal de buscar */}
+        <div className="sidebar-search-icon">•</div>
+      </div>
 
       {/* Menú de navegación */}
       <nav>

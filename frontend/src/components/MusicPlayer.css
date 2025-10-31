@@ -5,8 +5,8 @@
   left: 280px;
   right: 0;
   height: 90px;
-  background-color: #181818;
-  border-top: 1px solid #282828;
+  background-color: #1a1a1a;
+  border-top: 1px solid #2a2a2a;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,6 +40,7 @@
   flex-direction: column;
   flex: 1;
   min-width: 0; /* Permite que el texto se trunque correctamente */
+  margin-right: 8px;
 }
 
 .song-title {
@@ -62,15 +63,24 @@
 
 /* Icono de corazón */
 .heart-icon {
-  margin-left: 16px;
+  margin-left: 8px;
   color: #b3b3b3;
   cursor: pointer;
   font-size: 18px;
   flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: none;
 }
 
 .heart-icon:hover {
-  color: #10b981;
+  color: #10b981; /* Verde al pasar el cursor */
+  transform: none;
+}
+
+.heart-icon.liked {
+  color: #10b981; /* Verde cuando está activo */
 }
 
 /* Sección central - Controles de reproducción */
@@ -102,7 +112,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
 }
 
 .control-button:hover {
@@ -129,7 +139,7 @@
   justify-content: center;
   cursor: pointer;
   font-size: 18px;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   flex-shrink: 0;
 }
 
@@ -168,7 +178,14 @@
   height: 100%;
   background-color: #10b981;
   border-radius: 2px;
-  width: 30%;
+  width: 9%;
+}
+
+/* Grupo de letra y cola */
+.lyrics-queue-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Sección derecha - Controles adicionales */
@@ -179,7 +196,7 @@
   flex: 1;
   min-width: 180px;
   max-width: 250px;
-  gap: 12px;
+  gap: 16px;
 }
 
 .control-icon {
@@ -192,7 +209,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
 }
 
 .control-icon:hover {

@@ -22,17 +22,36 @@
   letter-spacing: 1px;
 }
 
+/* Contenedor para la barra de búsqueda con icono */
+.sidebar-search-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
 /* Barra de búsqueda */
 .sidebar-search {
   background-color: #2a2a2a;
   border: 1px solid #3a3a3a;
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 14px 16px 14px 34px;
   color: white;
   width: 100%;
-  margin-bottom: 24px;
-  font-size: 14px;
+  font-size: 16px;
   transition: all 0.3s ease;
+  height: 48px;
+}
+
+/* Icono temporal de búsqueda */
+.sidebar-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 16px;
+  pointer-events: none;
+  transition: color 0.3s ease;
 }
 
 /* Efecto focus para la barra de búsqueda */
@@ -42,16 +61,16 @@
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
+/* Efecto focus para el color del icono */
+.sidebar-search:focus + .sidebar-search-icon {
+  color: #10b981;
+}
+
 /* Placeholder de la barra de búsqueda */
 .sidebar-search::placeholder {
   color: #888;
-}
-
-/* Contenedor del menú de navegación */
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 32px 0;
+  font-size: 16px;
+  font-weight: normal;
 }
 
 /* Items del menú de navegación */
@@ -65,6 +84,8 @@
   margin-bottom: 4px;
   display: flex;
   align-items: center;
+  height: 48px;
+  box-sizing: border-box;
 }
 
 /* Efecto hover para los items del menú */
@@ -102,7 +123,7 @@
   padding: 14px 24px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   transition: all 0.3s ease;
   text-align: center;
@@ -141,4 +162,15 @@
 /* Color del icono cuando el item está activo */
 .sidebar-menu-item.active::before {
   color: #000;
+}
+
+/* Login & Signup sin subrayado */
+.sidebar a,
+.sidebar a:link,
+.sidebar a:visited,
+.sidebar a:hover,
+.sidebar a:active,
+.sidebar a:focus {
+  text-decoration: none;
+  outline: none;
 }
