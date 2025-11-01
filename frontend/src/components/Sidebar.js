@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css';
 
 function Sidebar() {
   const searchInputRef = useRef(null);
+  const location = useLocation(); // Para detectar la ruta actual
 
   // Efecto para manejar la tecla "s"
   useEffect(() => {
@@ -30,6 +31,11 @@ function Sidebar() {
     };
   }, []);
 
+  // Función para verificar si un item está activo
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <div className="sidebar">
       {/* Título de la aplicación */}
@@ -50,8 +56,16 @@ function Sidebar() {
       {/* Menú de navegación */}
       <nav>
         <ul className="sidebar-menu">
-          <li className="sidebar-menu-item active">Para ti</li>
-          <li className="sidebar-menu-item">Explorar</li>
+          {/* Item "Para ti" con Link */}
+          <li className={`sidebar-menu-item ${isActive('/') ? 'active' : ''}`}>
+            <Link to="/">Para ti</Link>
+          </li>
+          
+          {/* Item "Explorar" con Link */}
+          <li className={`sidebar-menu-item ${isActive('/explore') ? 'active' : ''}`}>
+            <Link to="/explore">Explorar</Link>
+          </li>
+          
           <li className="sidebar-menu-item">Siguiendo</li>
           <li className="sidebar-menu-item">Subir</li>
           <li className="sidebar-menu-item">Perfil</li>

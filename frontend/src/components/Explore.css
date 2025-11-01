@@ -1,0 +1,148 @@
+/* Contenedor principal de Explorar */
+.explore-container {
+  flex: 1;
+  padding: 40px;
+  background-color: #0c0c0c;
+  color: #fff;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+/* Título de la sección */
+.explore-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 30px;
+  letter-spacing: 0.5px;
+}
+
+/* Sección de géneros musicales */
+.genre-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+/* Lista horizontal de géneros */
+.genre-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge */
+  flex: 1;
+  /* Evitar que los géneros se partan */
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 20px;
+}
+
+/* Ocultar scrollbar en Chrome, Safari y Opera */
+.genre-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Etiquetas de género */
+.genre-tag {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  /* Evitar que se partan los géneros */
+  scroll-snap-align: start;
+}
+
+/* Efecto hover en géneros */
+.genre-tag:hover {
+  background-color: #3a3a3a;
+  transform: translateY(-1px);
+}
+
+/* Contenedor de flechas visible */
+.genre-arrows-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin-left: auto;
+}
+
+/* Flechas de navegación */
+.genre-arrow {
+  background-color: #1a1a1a;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Efecto hover en flechas */
+.genre-arrow:hover:not(.disabled) {
+  background-color: #10b981;
+  color: #000;
+}
+
+/* Flecha deshabilitada */
+.genre-arrow.disabled {
+  color: #5e5e5e;
+  background-color: #1a1a1a;
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Efecto hover en flechas deshabilitadas */
+.genre-arrow.disabled:hover {
+  background-color: #1a1a1a;
+  color: #5e5e5e;
+}
+
+/* Tooltips personalizados */
+.tooltip-container {
+  position: relative;
+}
+
+.tooltip-container::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2a2a2a;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.tooltip-container:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.5s;
+}

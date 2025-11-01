@@ -6,6 +6,7 @@ import MusicPlayer from './components/MusicPlayer';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword';
 import SignUp from './components/SignUp';
+import Explore from './components/Explore';
 import './App.css';
 
 function App() {
@@ -25,13 +26,17 @@ function App() {
           {/* Ruta principal (con sidebar) */}
           <Route path="/" element={
             <>
-              {/* Barra lateral izquierda */}
               <Sidebar />
-
-              {/* Contenido principal */}
               <MainContent />
-
-              {/* Reproductor de música */}
+              <MusicPlayer />
+            </>
+          } />
+          
+          {/* Nueva ruta para "Explorar" */}
+          <Route path="/explore" element={
+            <>
+              <Sidebar />
+              <Explore />
               <MusicPlayer />
             </>
           } />
