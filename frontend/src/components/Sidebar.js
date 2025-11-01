@@ -64,7 +64,7 @@ function Sidebar() {
       {/* Botones de autenticación */}
       <div className="sidebar-buttons">
         <Link to="/login" className="sidebar-button">Inicia sesión</Link>
-        <button className="sidebar-button sidebar-button-secondary">Crea tu cuenta</button>
+        <Link to="/signup" className="sidebar-button sidebar-button-secondary">Crea tu cuenta</Link>
       </div>
     </div>
   );
