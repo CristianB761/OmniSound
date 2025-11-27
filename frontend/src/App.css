@@ -1,22 +1,30 @@
-/* Contenedor principal de la aplicación */
-.app {
-  display: flex;
-  min-height: 100vh;
-  font-family: 'Arial', sans-serif;
-  background-color: #121212;
-  color: #fff;
-  margin-left: 280px; /* Compensa el ancho del sidebar fijo */
-}
-
-/* Reset de márgenes y padding para todos los elementos */
+/* Reset universal: elimina márgenes y padding por defecto, usa border-box para para todos los elementos */
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: border-box; /* Incluye padding y border en el width/height de los elementos */
 }
 
-/* Estilos base del body */
+/* Estilos base para el cuerpo de toda la web site */
 body {
-  background-color: #121212;
-  overflow-x: hidden; /* Previene scroll horizontal */
+  background-color: #0d0d0d; /* Fondo de color oscuro consistente */
+  overflow-x: hidden; /* Oculta scroll horizontal no deseado */
+}
+
+/* Contenedor inicial que envuelve toda la aplicación React */
+.app {
+  display: flex; /* Layout flexible para sidebar y contenido */
+  min-height: 100vh; /* Ocupa al menos toda la altura de la ventana */
+  font-family: 'Arial', sans-serif; /* Fuente base para toda la aplicación */
+  background-color: #0d0d0d;
+  margin-left: 280px; /* Espacio para el sidebar fijo */
+}
+
+/* Contenedor para páginas de signin, forgotpassword y signup */
+.auth-layout {
+  min-height: 100vh; /* Ocupa toda la altura de la ventana */
+  display: flex;
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  background: #0d0d0d;
 }

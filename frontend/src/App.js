@@ -1,44 +1,78 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import MainContent from './components/MainContent';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import SideBar from './components/SideBar';
+import ForYou from './components/ForYou';
 import MusicPlayer from './components/MusicPlayer';
-import Login from './components/Login';
+import SignIn from './components/SignIn';
 import ForgotPassword from './components/ForgotPassword';
 import SignUp from './components/SignUp';
 import Explore from './components/Explore';
 import './App.css';
+
+// Layout para páginas con sidebar y musicplayer
+const MainLayout = ({ children }) => {
+  return (
+    <>
+      <SideBar />
+      {children}
+      <MusicPlayer />
+    </>
+  );
+};
+
+// Layout para páginas sin sidebar y musicplayer
+const AuthLayout = ({ children }) => {
+  return (
+    <div className="auth-layout">
+      {children}
+    </div>
+  );
+};
 
 function App() {
   return (
     <Router>
       <div className="app">
         <Routes>
-          {/* Ruta para login (sin sidebar) */}
-          <Route path="/login" element={<Login />} />
 
-          {/* Ruta para restablecer contraseña (sin sidebar) */}
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* Ruta For You como Ruta Inicial */}
+          <Route path="/" element={<Navigate to="/foryou" replace />} />
 
-          {/* Ruta para registro (sin sidebar) */}
-          <Route path="/signup" element={<SignUp />} />
-
-          {/* Ruta principal (con sidebar) */}
-          <Route path="/" element={
-            <>
-              <Sidebar />
-              <MainContent />
-              <MusicPlayer />
-            </>
+          {/* ===== MAINLAYOUT ===== */}
+          {/* Ruta para For You */}
+          <Route path="/foryou" element={
+            <MainLayout>
+              <ForYou />
+            </MainLayout>
           } />
-          
-          {/* Nueva ruta para "Explorar" */}
+
+          {/* Ruta para Explore */}
           <Route path="/explore" element={
-            <>
-              <Sidebar />
+            <MainLayout>
               <Explore />
-              <MusicPlayer />
-            </>
+            </MainLayout>
+          } />
+
+          {/* ===== AUTHLAYOUT ===== */}
+          {/* Ruta para Sign In */}
+          <Route path="/signin" element={
+            <AuthLayout>
+              <SignIn />
+            </AuthLayout>
+          } />
+
+          {/* Ruta para Forgot Password */}
+          <Route path="/forgotpassword" element={
+            <AuthLayout>
+              <ForgotPassword />
+            </AuthLayout>
+          } />
+
+           {/* Ruta para Sign Up */}
+          <Route path="/signup" element={
+            <AuthLayout>
+              <SignUp />
+            </AuthLayout>
           } />
         </Routes>
       </div>
