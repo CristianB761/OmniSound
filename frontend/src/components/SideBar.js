@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './Sidebar.css';
+import './SideBar.css';
 
-function Sidebar() {
+function SideBar() {
   const searchInputRef = useRef(null);
   const location = useLocation(); // Para detectar la ruta actual
 
@@ -84,4 +84,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default SideBar;
