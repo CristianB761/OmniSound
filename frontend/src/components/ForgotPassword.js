@@ -2,183 +2,261 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './ForgotPassword.css';
 
+// Importar iconos como componentes React
+import { ReactComponent as CloseIcon } from '../icons/CloseIcon.svg';
+import { ReactComponent as BackIcon } from '../icons/BackIcon.svg';
+import { ReactComponent as SendIcon } from '../icons/SendIcon.svg';
+import { ReactComponent as SentIcon } from '../icons/SentIcon.svg';
+import { ReactComponent as ValidateIcon } from '../icons/ValidateIcon.svg';
+import { ReactComponent as ValidIcon } from '../icons/ValidIcon.svg';
+import { ReactComponent as InvalidIcon } from '../icons/InvalidIcon.svg';
+import { ReactComponent as ShowPasswordIcon } from '../icons/ShowPasswordIcon.svg';
+import { ReactComponent as HidePasswordIcon } from '../icons/HidePasswordIcon.svg';
+
 function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isCodeVerified, setIsCodeVerified] = useState(false);
-  const navigate = useNavigate();
+  const [email, setEmail] = useState(''); // Almacena el email ingresado
+  const [code, setCode] = useState(''); // Almacena el código de verificación ingresado
+  const [newPassword, setNewPassword] = useState(''); // Almacena la nueva contraseña ingresada
+  const [isCodeSent, setIsCodeSent] = useState(false); // Indica si el código fue enviado
+  const [isCodeValid, setIsCodeValid] = useState(null); //Estado de validación: null = validar, true = válido, false = no válido
+  const [showPassword, setShowPassword] = useState(false); // Indica si se muestra la contraseña
 
-  // Función para manejar el envío del formulario completo
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Lógica para restablecer contraseña aquí
-    console.log('Contraseña restablecida');
-    // Redirigir al login después del restablecimiento
-    navigate('/login');
-  };
+  const navigate = useNavigate(); // Hook para navegar entre rutas
 
-  // Función para enviar el código de verificación
-  const handleSendCode = (e) => {
-    e.preventDefault();
-    if (email) {
-      // Lógica para enviar código aquí
-      console.log('Código enviado a:', email);
-      setIsCodeSent(true);
-    }
-  };
-
-  // Función para verificar el código
-  const handleVerifyCode = (e) => {
-    e.preventDefault();
-    if (code.length === 6) {
-      // Lógica para verificar código aquí
-      console.log('Código verificado');
-      setIsCodeVerified(true);
-    }
-  };
-
-  // Función para cerrar y volver a la sección "Para ti"
-  const handleClose = () => {
-    navigate('/'); // Redirige a la página principal (sección "Para ti")
-  };
-
-  // Efecto para manejar la tecla "esc"
+  // Efecto para manejar el título de la pestaña y el shortcut de teclado
   useEffect(() => {
+    // Cambia el título de la pestaña del navegador cuando el componente se monta
+    document.title = "OmniSound - Restablecer contraseña";
+
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        handleClose();
+        handleClose(); // ESC: Cierra el formulario
       }
     };
-
-    // Agregar event listener
+    // Agrega el event listener cuando el componente se monta
     document.addEventListener('keydown', handleKeyDown);
-
-    // Limpiar event listener al desmontar
+    // Limpia el event listener cuando el componente se desmonta
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, []); // Array vacío significa que solo se ejecuta una vez
 
-  // Validar si el formulario completo está listo para enviar
-  const isFormValid = email && code.length === 6 && newPassword.length >= 6;
+  // Valida el formato del email usando una expresión regular
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Valida que el código tenga exactamente 6 dígitos
+  const isValidCode = (code) => {
+    return code.length === 6;
+  };
+
+  // Valida que la contraseña tenga al menos 8 caracteres
+  const isValidPassword = (password) => {
+    return password.length >= 8;
+  };
+
+  // Simula el envío del código de verificación por email
+  const handleSendCode = () => {
+    if (email && isValidEmail(email) && !isCodeSent) {
+      setIsCodeSent(true);
+      console.log('Código enviado a:', email);
+      // Aquí iría la lógica real de verificación con el backend
+    }
+  };
+
+  // Función para manejar cambios en el email
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    // Si se modifica el email, vuelve al estado de "Enviar código"
+    if (isCodeSent) {
+      setIsCodeSent(false);
+    }
+  };
+
+  // Función para manejar cambios en el código
+  const handleCodeChange = (e) => {
+    const newCode = e.target.value.replace(/\D/g, '').slice(0, 6); // Solo números, máximo 6
+    setCode(newCode);
+    // Si se modifica el código, vuelve al estado de "Validar código"
+    if (isCodeValid !== null) {
+      setIsCodeValid(null);
+    }
+  };
+
+  // Simula la validación del código de verificación
+  const handleVerifyCode = () => {
+    if (isValidCode(code)) {
+      // Simulación: Código válido es "123456"
+      if (code === '123456') { // Código de prueba
+        setIsCodeValid(true);
+        console.log('Código válido');
+      } else {
+        setIsCodeValid(false);
+        console.log('Código no válido');
+      }
+    }
+  };
+
+  // Función para alternar la visibilidad de la contraseña
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Función para redirigir al formulario inicia sesión
+  const handleBack = () => {
+    navigate('/signin');
+  };
+
+  // Función para redirigir a la página principal
+  const handleClose = () => {
+    navigate('/foryou');
+  };
+
+  // Maneja el envío del formulario
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+    console.log('Contraseña restablecida');
+    // Aquí iría la lógica real de restablecimiento con el backend
+    // Por ahora solo redirige al formulario de inicia sesión
+    navigate('/signin');
+  };
+
+  // Determina si el formulario completo es válido
+  const isFormValid = isValidEmail(email) && 
+                      isValidCode(code) && 
+                      isValidPassword(newPassword) && 
+                      isCodeValid === true; // Código debe estar validado como verdadero
 
   return (
-    <div className="forgot-password-page">
-      <div className="forgot-password-container">
-        {/* Botón de cerrar */}
+    <div className="forgotpassword-page">
+      <div className="forgotpassword-container">
+
+        {/* Botón Volver a signin con ícono */}
         <button 
-          className="forgot-close-btn tooltip-container"
-          onClick={handleClose}
-          aria-label="Cerrar"
-          data-tooltip="Cerrar"
+          className="forgot-back-button"
+          onClick={handleBack}
+          type="button"
+          data-tooltip="Volver"
         >
-          ×
+          <BackIcon className="back-icon" />
         </button>
 
-        {/* Título principal */}
-        <h1 className="forgot-title">Restablecer contraseña</h1>
+        {/* Botón Cerrar formulario con ícono */}
+        <button 
+          className="forgot-close-button"
+          onClick={handleClose}
+          type="button"
+          data-tooltip="Cerrar"
+        >
+          <CloseIcon className="close-icon" />
+        </button>
 
+        {/* Título del formulario */}
+        <h1 className="forgotpassword-title">Restablecer contraseña</h1>
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="forgot-form" noValidate>
-          {/* Campo Email */}
-          <div className="input-group">
-            <label htmlFor="email" className="input-label">
+        <form onSubmit={handleSubmit} className="forgotpassword-form" noValidate>
+
+          {/* Grupo de input para el email */}
+          <div className="forgot-input-group">
+            <span className="forgot-input-label">
               Correo electrónico:
-            </label>
-            <div className="email-input-wrapper">
-              <input
-                id="email"
-                type="email"
-                className="forgot-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Correo electrónico"
-                disabled={isCodeSent} // Deshabilitar después de enviar código
-              />
-              <button
-                type="button"
-                className="send-code-btn"
-                onClick={handleSendCode}
-                disabled={!email || isCodeSent}
-              >
-                {isCodeSent ? 'Código enviado' : 'Enviar código'}
-              </button>
-            </div>
+            </span>
+            <input
+              type="text"
+              className="forgot-input"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Ingrese su correo electrónico"
+            />
+
+            {/* Botón Enviar código - Cambia de ícono según el estado */}
+            <button
+              type="button"
+              className="forgot-send-button"
+              onClick={handleSendCode}
+              disabled={!email || !isValidEmail(email) || isCodeSent}
+              data-tooltip={isCodeSent ? "Código enviado" : "Enviar código"}
+            >
+              {isCodeSent ? <SentIcon className="sent-icon" /> : <SendIcon className="send-icon" />}
+            </button>
           </div>
 
-          {/* Campo Código */}
-          <div className="input-group">
-            <label htmlFor="code" className="input-label">
-              Ingresa el código de 6 dígitos:
-            </label>
-            <div className="code-input-wrapper">
-              <input
-                id="code"
-                type="text"
-                className="forgot-input"
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} // Solo números, max 6
-                placeholder="Ingresa el código de 6 dígitos"
-                maxLength="6"
-                disabled={!isCodeSent || isCodeVerified} // Deshabilitar si no se envió el código o ya está verificado
-              />
-              <button
-                type="button"
-                className="verify-code-btn"
-                onClick={handleVerifyCode}
-                disabled={code.length !== 6 || isCodeVerified}
-              >
-                {isCodeVerified ? 'Verificado' : 'Validar'}
-              </button>
-            </div>
+          {/* Grupo de input para el código de verificación */}
+          <div className="forgot-input-group">
+            <span className="forgot-input-label">
+              Código de verificación:
+            </span>
+            <input
+              type="text"
+              className={`forgot-input ${isCodeValid === false ? 'invalid-code' : ''}`}
+              value={code}
+              onChange={handleCodeChange}
+              placeholder="Ingrese los 6 dígitos"
+              maxLength="6"
+            />
+
+            {/* Botón de Validación - Cambia de ícono según el resultado */}
+            <button
+              type="button"
+              className="forgot-verify-button"
+              onClick={handleVerifyCode}
+              disabled={!isValidCode(code) || isCodeValid !== null}
+              data-tooltip={
+                isCodeValid === null ? "Validar código" : 
+                isCodeValid ? "Código válido" : "Código no válido"
+              }
+            >
+              {isCodeValid === null ? <ValidateIcon className="validate-icon" /> : (isCodeValid ? <ValidIcon className="valid-icon" /> : <InvalidIcon className="invalid-icon" />)}
+            </button>
           </div>
 
-          {/* Campo Nueva contraseña */}
-          <div className="input-group">
-            <label htmlFor="newPassword" className="input-label">
+          {/* Grupo de input para la contraseña */}
+          <div className="forgot-input-group">
+            <span className="forgot-input-label">
               Nueva contraseña:
-            </label>
-            <div className="password-input-wrapper">
-              <input
-                id="newPassword"
-                type={showPassword ? 'text' : 'password'}
-                className="forgot-input password-input"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Nueva contraseña"
-                minLength="6"
-                disabled={!isCodeVerified} // Deshabilitar hasta que el código esté verificado
-              />
-              {/* Botón mostrar/ocultar contraseña */}
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={!isCodeVerified} // Deshabilitar el botón si el campo está deshabilitado
-              >
-                {showPassword ? 'Ocultar' : 'Mostrar'}
-              </button>
-            </div>
+            </span>
+            <input
+              type={showPassword ? "text" : "password"}
+              className="forgot-input"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Ingrese su nueva contraseña"
+            />
+
+            {/* Botón de visibilidad */}
+            <button
+              type="button"
+              className="forgot-visibility-button"
+              onClick={togglePasswordVisibility}
+              disabled={false}
+              data-tooltip={showPassword ? "Ocultar" : "Mostrar"}
+            >
+              {showPassword ? <ShowPasswordIcon className="show-icon" /> : <HidePasswordIcon className="hide-icon" />}
+            </button>
           </div>
 
-          {/* Botón de envío principal */}
+          {/* Botón Restablecer constraseña - Se habilita solo cuando es válido */}
           <button
             type="submit"
-            className={`forgot-submit-btn ${isFormValid ? 'active' : 'disabled'}`}
+            className={`forgot-submit-button ${isFormValid ? 'enabled' : 'disabled'}`}
             disabled={!isFormValid}
           >
-            Restablecer mi contraseña
+            Restablecer contraseña
           </button>
         </form>
 
-        {/* Enlace a registro */}
+        {/* Pie de página */}
         <div className="forgot-footer">
           <span>¿No tienes una cuenta?</span>
-          <Link to="/signup" className="signup-link">
-            Registrarse
+          {/* Link Crea tu cuenta */}
+          <Link 
+            to="/signup" 
+            className="signup-link"
+          >
+            Crea tu cuenta
           </Link>
         </div>
       </div>
