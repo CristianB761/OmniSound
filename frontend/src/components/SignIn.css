@@ -1,0 +1,245 @@
+/* Evita que el usuario pueda seleccionar texto en todo el signin */
+.signin-page * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
+}
+
+/* Fondo que cubre toda la pantalla */
+.signin-page {
+  min-height: 100vh; /* Altura mínima de toda la ventana */
+  background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el contenedor */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed; /* Posición fija para que no haga scroll */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* ===== CONTENEDOR DEL FORMULARIO ===== */
+.signin-container {
+  background-color: #121212; /* Color de fondo ligeramente más claro que la página */
+  color: ghostwhite;
+  padding: 40px;
+  border-radius: 16px; /* Esquinas redondeadas */
+  width: 100%;
+  max-width: 450px; /* Ancho máximo para mantener legibilidad */
+  position: relative; /* Para posicionar el botón cerrar de forma absoluta */
+  border: 1px solid #2c2c2c; /* Borde sutil */
+}
+
+/* Título del formulario */
+.signin-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0 0 40px 0; /* Sin margen superior, margen inferior grande */
+  text-align: center;
+  color: lightgray;
+}
+
+/* Contenedor para cada grupo de input con su label */
+.signin-input-group {
+  position: relative; /* Para posicionar botones internos de forma absoluta */
+  margin-bottom: 24px; /* Espacio entre grupos de inputs */
+}
+
+/* Label descriptivo para cada input */
+.signin-input-label {
+  display: block; /* Ocupa toda la línea */
+  color: lightgray;
+  font-size: 16px;
+  margin-bottom: 8px; /* Separación con el input */
+  font-weight: 500;
+}
+
+/* ===== ESTILOS DE INPUTS ===== */
+.signin-input {
+  width: 100%;
+  background-color: #1e1e1e;
+  border: 1px solid #2c2c2c;
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: ghostwhite;
+  font-size: 16px;
+  transition: all 0.3s ease; /* Transición suave para todos los cambios */
+}
+
+/* Texto de placeholder */
+.signin-input::placeholder {
+  color: dimgray;
+}
+
+/* Efecto hover cuando el input no está enfocado */
+.signin-input:hover:not(:focus) {
+  background-color: #2c2c2c;
+  border-color: dimgray;
+}
+
+/* Efecto focus cuando el input está enfocado */
+.signin-input:focus {
+  outline: none; /* Elimina el outline por defecto del navegador */
+  border-color: lightseagreen;
+  background-color: #2c2c2c;
+}
+
+/* Ajusta el padding derecho cuando hay botón de visibilidad */
+.signin-input-group:has(.signin-visibility-button) .signin-input {
+  padding-right: 50px; /* Espacio para el botón de visibilidad */
+}
+
+/* ===== ESTILOS PARA BOTONES ===== */
+.signin-close-button,
+.signin-visibility-button {
+  position: absolute;
+  background: none;
+  border: none;
+  top: 16px;
+  color: lightgray;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botón cerrar en la esquina superior derecha */
+.signin-close-button {
+  position: absolute; /* Posicionado respecto al contenedor relativo */
+  top: 16px;
+  right: 16px;
+}
+
+/* Botón de visibilidad dentro del input de contraseña */
+.signin-visibility-button {
+  position: absolute;
+  right: 16px;
+  top: 38px; /* Alineado verticalmente con el input */
+}
+
+/* Efectos hover para los botones */
+.signin-close-button:hover,
+.signin-visibility-button:not(.show-password):hover {
+  color: ghostwhite;
+}
+
+/* Cambia color del botón de visibilidad */
+.signin-input-group input[type="text"] ~ .signin-visibility-button {
+  color: lightseagreen; /* Indica que la contraseña es visible */
+}
+
+/* Asegura que los íconos SVG ocupen todo el espacio del botón */
+.signin-close-button svg,
+.signin-visibility-button svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== BOTÓN DE INICIAR SESIÓN ===== */
+  .signin-submit-button {
+  width: 100%;
+  background-color: lightseagreen;
+  color: #121212;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 32px; /* Espacio antes del pie de página */
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover cuando el botón está habilitado */
+.signin-submit-button.enabled:hover {
+  background-color: teal;
+  color: #0d0d0d;
+}
+
+/* Estilo cuando el botón está deshabilitado */
+.signin-submit-button.disabled {
+  background-color: #1e1e1e;
+  color: dimgray;
+  cursor: not-allowed; /* Cursor que indica que no se puede hacer click */
+}
+
+/* ===== ESTILOS DE LINKS ===== */
+/* Link para recuperar contraseña */
+.forgotpassword-link {
+  color: teal;
+  text-decoration: none;
+  font-size: 16px;
+  display: block;
+  text-align: left;
+  margin: -14px 0 24px 0; /* Margen negativo para acercarlo al input contraseña */
+  width: fit-content; /* Ancho según su contenido */
+  transition: color 0.3s ease;
+}
+
+.forgotpassword-link:hover {
+  color: lightseagreen;
+}
+
+/* Pie de página */
+.signin-footer {
+  text-align: center;
+  color: lightgray;
+  font-size: 16px;
+}
+
+/* Link de crea tu cuenta */
+.signup-link {
+  color: lightseagreen;
+  text-decoration: none;
+  margin-left: 6px; /* Separación del texto anterior */
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.signup-link:hover {
+  color: teal;
+}
+
+/* ===== TOOLTIPS ===== */
+.signin-close-button[data-tooltip]::before,
+.signin-visibility-button[data-tooltip]::before {
+  content: attr(data-tooltip); /* Toma el texto del atributo data-tooltip */
+  position: absolute;
+  bottom: 100%; /* Posiciona arriba del elemento */
+  left: 50%;
+  transform: translateX(-50%); /* Centrado horizontal */
+  background-color: #2c2c2c;
+  color: ghostwhite;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap; /* Evita salto de línea */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* No intercepta eventos del mouse */
+  margin-bottom: 8px; /* Separación con el elemento */
+}
+
+/* Muestra el tooltip al hacer hover */
+.signin-close-button[data-tooltip]:hover::before,
+.signin-visibility-button[data-tooltip]:hover::before {
+  opacity: 1;
+}
+
+/* Oculta los íconos nativos del botón de visibilidad en todos los navegadores */
+.signin-input[type="password"]::-ms-reveal,
+.signin-input[type="password"]::-ms-clear,
+.signin-input[type="password"]::-webkit-credentials-auto-fill-button,
+.signin-input[type="password"]::-webkit-strong-password-auto-fill-button,
+.signin-input[type="password"]::-webkit-password-toggle-button {
+  display: none; /* Para Internet Explore/Edge y Chrome  */
+}
+
+.signin-input[type="password"]::-moz-textfield-decoration {
+  display: none; /* Para Firefox */
+}
