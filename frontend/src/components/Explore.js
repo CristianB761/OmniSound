@@ -1,36 +1,72 @@
 import React, { useRef, useState, useEffect } from 'react';
 import './Explore.css';
 
-function Explore() {
-  const genreListRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+// Importamos iconos como componente React
+import { ReactComponent as BackIcon } from '../icons/BackIcon.svg';
+import { ReactComponent as ForwardIcon } from '../icons/ForwardIcon.svg';
 
-  // Lista ampliada de géneros musicales
+function Explore() {
+  const genreListRef = useRef(null); // Referencia al contenedor de la lista de géneros
+  const [selectedGenre, setSelectedGenre] = useState('Todo'); // Género musical actualmente seleccionado
+  const [canScrollLeft, setCanScrollLeft] = useState(false); // Estado para controlar visibilidad del scroll izquierdo
+  const [canScrollRight, setCanScrollRight] = useState(true); // Estado para controlar visibilidad del scroll derecho
+
+  // Cambia el título de la pestaña del navegador cuando el componente se monta
+  useEffect(() => {
+    document.title = "OmniSound - Explorar";
+  }, []); // Array vacío significa que solo se ejecuta una vez
+
+  // Lista de todos los géneros musicales disponibles
   const genres = [
-    'Todo', 'Electrónica', 'Pop', 'Rock', 'R&B & soul', 'Hip-hop', 
-    'Drum & Bass', 'Jazz', 'Clásica', 'Reggae', 'Country', 'Funk',
-    'Metal', 'Blues', 'Salsa', 'Cumbia', 'Reggaetón', 'Trap'
+    'Todo', 'Blues', 'Clásica', 'Country', 'Cumbia', 'Drum & Bass', 
+    'Electrónica', 'Funk', 'Hip-hop', 'Jazz', 'Metal', 'Pop', 
+    'R&B & soul', 'Reggae', 'Reggaetón', 'Rock', 'Salsa', 'Trap'
   ];
 
-  // Función para verificar si se puede hacer scroll
+  // Maneja la selección de un género y asegura que sea visible en la lista
+  const handleGenreSelect = (genre, index) => {
+    setSelectedGenre(genre);
+    if (genreListRef.current) {
+      const genreElement = genreListRef.current.children[index];
+      const container = genreListRef.current;
+      const genreRect = genreElement.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      
+      // Scroll si el género seleccionado está fuera de vista a la izquierda
+      if (genreRect.left < containerRect.left) {
+        container.scrollBy({
+          left: genreRect.left - containerRect.left - 10, // Ajuste para margen
+          behavior: 'smooth'
+        });
+      }
+      // Scroll si el género seleccionado está fuera de vista a la derecha
+      else if (genreRect.right > containerRect.right) {
+        container.scrollBy({
+          left: genreRect.right - containerRect.right + 10,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
+
+  // Verifica la posición del scroll para mostrar/ocultar botones
   const checkScroll = () => {
     if (genreListRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = genreListRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+      setCanScrollLeft(scrollLeft > 0); // Hay contenido a la izquierda si es > 0
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10); // Hay contenido a la derecha
     }
   };
 
-  // Función para desplazar los géneros hacia la derecha
+  // Desplaza la lista de géneros hacia la derecha
   const scrollRight = () => {
     if (genreListRef.current) {
       genreListRef.current.scrollBy({ left: 200, behavior: 'smooth' });
-      setTimeout(checkScroll, 300);
+      setTimeout(checkScroll, 300); // Revisa el estado del scroll después de la animación
     }
   };
 
-  // Función para desplazar los géneros hacia la izquierda
+  // Desplaza la lista de géneros hacia la izquierda
   const scrollLeft = () => {
     if (genreListRef.current) {
       genreListRef.current.scrollBy({ left: -200, behavior: 'smooth' });
@@ -38,66 +74,60 @@ function Explore() {
     }
   };
 
-  // Verificar el scroll al cargar y cuando cambie el tamaño de la ventana
-  useEffect(() => {
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    
-    // Verificar también cuando termine la transición de scroll
-    const handleScrollEnd = () => {
-      setTimeout(checkScroll, 100);
-    };
-    
-    if (genreListRef.current) {
-      genreListRef.current.addEventListener('scroll', handleScrollEnd);
-    }
-    
-    return () => {
-      window.removeEventListener('resize', checkScroll);
-      if (genreListRef.current) {
-        genreListRef.current.removeEventListener('scroll', handleScrollEnd);
-      }
-    };
-  }, []);
-
   return (
     <div className="explore-container">
+
       {/* Título de la sección */}
       <h2 className="explore-title">Explorar</h2>
-
-      {/* Contenedor de géneros con flechas */}
+      {/* Sección de géneros musicales */}
       <div className="genre-section">
-        {/* Lista de géneros */}
-        <div className="genre-list" ref={genreListRef} onScroll={checkScroll}>
+
+        {/* Lista scrollable de géneros musicales */}
+        <div 
+          className="genre-list" 
+          ref={genreListRef} 
+          onScroll={checkScroll} // Verifica el scroll al desplazar
+        >
+
+          {/* Mapea cada género a un botón */}
           {genres.map((genre, index) => (
-            <button key={index} className="genre-tag">
+            <button 
+              key={index} 
+              className={`genre-tag ${selectedGenre === genre ? 'selected' : ''}`}
+              onClick={() => handleGenreSelect(genre, index)}
+            >
               {genre}
             </button>
           ))}
         </div>
-        
-        {/* Contenedor visible para las flechas */}
-        <div className="genre-arrows-container">
-          {/* Flecha izquierda - retroceder */}
+
+        {/* Efectos de desvanecimiento visual */}
+        {canScrollLeft && <div className="fade-left"></div>}
+        {canScrollRight && <div className="fade-right"></div>}
+
+        {/* Contenedor de botones de navegación */}
+        <div className="nav-arrows-container">
+
+          {/* Botón Retroceder - Se deshabilita cuando no hay scroll izquierdo */}
           <button 
-            className={`genre-arrow tooltip-container ${!canScrollLeft ? 'disabled' : ''}`}
+            className={`nav-arrow ${!canScrollLeft ? 'disabled' : ''}`}
             onClick={scrollLeft}
-            data-tooltip="Retroceder"
             aria-label="Retroceder"
             disabled={!canScrollLeft}
+            data-tooltip="Retroceder"
           >
-            ＜
+            <BackIcon />
           </button>
-          
-          {/* Flecha derecha - avanzar */}
+
+          {/* Botón Avanzar - Se deshabilita cuando no hay scroll derecho */}
           <button 
-            className={`genre-arrow tooltip-container ${!canScrollRight ? 'disabled' : ''}`}
+            className={`nav-arrow ${!canScrollRight ? 'disabled' : ''}`}
             onClick={scrollRight}
-            data-tooltip="Avanzar"
             aria-label="Avanzar"
             disabled={!canScrollRight}
+            data-tooltip="Avanzar"
           >
-            ＞
+            <ForwardIcon />
           </button>
         </div>
       </div>

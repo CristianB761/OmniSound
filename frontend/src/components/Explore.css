@@ -1,148 +1,171 @@
-/* Contenedor principal de Explorar */
+/* Evita que el usuario pueda seleccionar texto en todo el sidebar */
+.explore-container,
+.explore-container * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
+}
+
+/* ===== CONTENEDOR DEL EXPLORE ===== */
 .explore-container {
-  flex: 1;
+  flex: 1; /* Ocupa todo el espacio disponible restante */
   padding: 40px;
-  background-color: #0c0c0c;
-  color: #fff;
-  overflow-y: auto;
-  min-height: 100vh;
+  background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el sidebar */
+  overflow-y: auto; /* Permite scroll vertical si es necesario */
+  min-height: 100vh; /* Altura mínima de toda la ventana */
 }
 
 /* Título de la sección */
 .explore-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  color: #fff;
+  color: lightgray;
   padding-bottom: 12px;
-  border-bottom: 1px solid #2a2a2a;
-  margin-bottom: 30px;
-  letter-spacing: 0.5px;
+  border-bottom: 1px solid #2c2c2c; /* Línea divisoria debajo del título */
+  margin-bottom: 32px; /* Espacio después del título */
+  letter-spacing: 0.5px; /* Espaciado entre letras para mejor legibilidad */
 }
 
-/* Sección de géneros musicales */
+/* ===== SECCIÓN DE GÉNEROS MUSICALES ===== */
 .genre-section {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
+  gap: 12px; /* Espacio entre la lista y botones */
+  margin-top: -8px; /* Ajuste fino de posición vertical */
+  position: relative; /* Para posicionar elementos absolutos hijos */
 }
 
-/* Lista horizontal de géneros */
+/* ===== LISTA DE GÉNEROS SCROLLABLE ===== */
 .genre-list {
   display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE y Edge */
-  flex: 1;
-  /* Evitar que los géneros se partan */
-  scroll-snap-type: x mandatory;
-  scroll-padding: 0 20px;
+  gap: 12px; /* Espacio entre botones de género */
+  overflow-x: auto; /* Habilita scroll horizontal */
+  scrollbar-width: none; /* Oculta scrollbar en Firefox */
+  -ms-overflow-style: none; /* Oculta scrollbar en Internet Explore/Edge */
+  flex: 1; /* Ocupa todo el espacio disponible */
 }
 
-/* Ocultar scrollbar en Chrome, Safari y Opera */
+/* Oculta scrollbar en navegadores WebKit (Chrome, Safari) */
 .genre-list::-webkit-scrollbar {
   display: none;
 }
 
-/* Etiquetas de género */
+/* ===== BOTONES DE GÉNERO MUSICAL ===== */
 .genre-tag {
-  background-color: #2a2a2a;
-  color: #fff;
+  background-color: #1e1e1e;
+  color: lightgray;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px;
+  border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  /* Evitar que se partan los géneros */
-  scroll-snap-align: start;
+  white-space: nowrap; /* Evita saltos de línea */
+  flex-shrink: 0; /* Evita que el ícono se reduzca */
+  font-weight: bold;
+  scroll-snap-align: start; /* Alinea al inicio en scroll con snap */
 }
 
-/* Efecto hover en géneros */
+/* Efecto hover para botones de género */
 .genre-tag:hover {
-  background-color: #3a3a3a;
-  transform: translateY(-1px);
+  background-color: #2c2c2c;
+  color: ghostwhite;
 }
 
-/* Contenedor de flechas visible */
-.genre-arrows-container {
+/* Estilo para el género seleccionado */
+.genre-tag.selected {
+  background-color: lightseagreen;
+  color: #121212;
+}
+
+/* ===== BOTONES DE NAVEGACIÓN ===== */
+.nav-arrows-container {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  margin-left: auto;
+  gap: 4px; /* Espacio entre botones */
+  margin-left: auto; /* Empuja los botones hacia la derecha */
 }
 
-/* Flechas de navegación */
-.genre-arrow {
-  background-color: #1a1a1a;
+/* Estilos para los botones de navegación */
+.nav-arrow {
+  background-color: #1e1e1e;
   border: none;
-  color: #fff;
-  font-size: 16px;
+  color: lightgray;
   cursor: pointer;
-  padding: 0;
-  transition: all 0.3s ease;
-  width: 36px;
-  height: 36px;
+  padding: 8px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; /* Evita que la imagen se reduzca */
 }
 
-/* Efecto hover en flechas */
-.genre-arrow:hover:not(.disabled) {
-  background-color: #10b981;
-  color: #000;
+/* Efecto hover para botones habilitadas */
+.nav-arrow:hover:not(.disabled) {
+  background-color: #2c2c2c;
+  color: ghostwhite;
 }
 
-/* Flecha deshabilitada */
-.genre-arrow.disabled {
-  color: #5e5e5e;
-  background-color: #1a1a1a;
-  cursor: not-allowed;
-  opacity: 0.4;
+/* Estilo para botones deshabilitadas */
+.nav-arrow.disabled {
+  background-color: #121212;
+  color: dimgray;
+  cursor: not-allowed; /* Cursor que indica que no se puede hacer click */
 }
 
-/* Efecto hover en flechas deshabilitadas */
-.genre-arrow.disabled:hover {
-  background-color: #1a1a1a;
-  color: #5e5e5e;
+/* Tamaño consistente para iconos SVG dentro de los botones */
+.nav-arrow svg {
+  width: 20px;
+  height: 20px;
 }
 
-/* Tooltips personalizados */
-.tooltip-container {
-  position: relative;
-}
-
-.tooltip-container::before {
-  content: attr(data-tooltip);
+/* ===== TOOLTIPS ===== */
+.nav-arrow::before {
+  content: attr(data-tooltip); /* Toma el texto del atributo data-tooltip */
   position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 100%; /* Posiciona arriba del elemento */
+  margin-bottom: 8px; /* Separación con el elemento */
+  transform: translateX(-50%); /* Centrado horizontal */
   background-color: #2a2a2a;
-  color: #fff;
-  padding: 6px 10px;
+  color: ghostwhite;
+  padding: 8px 14px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: nowrap; /* Texto en una sola línea */
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 1000;
-  pointer-events: none;
+  visibility: hidden; /* Oculta completamente cuando no está en uso */
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* El tooltip no intercepta clicks */
 }
 
-.tooltip-container:hover::before {
+/* Muestra el tooltip al hacer hover */
+.nav-arrow:hover::before {
   opacity: 1;
   visibility: visible;
-  transition-delay: 0.5s;
+}
+
+/* ===== EFECTOS DE DESVANECIMIENTO VISUAL ===== */
+.fade-left,
+.fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px; /* Ancho del efecto de desvanecimiento */
+  pointer-events: none; /* Permite clicks a través del elemento */
+  z-index: 1; /* Se superpone sobre la lista pero bajo los botones */
+}
+
+/* Efecto de desvanecimiento en el borde izquierdo */
+.fade-left {
+  left: 0;
+  background: linear-gradient(to right, #0d0d0d 5%, #0d0d0d00 95%);
+}
+
+/* Efecto de desvanecimiento en el borde derecho */
+.fade-right {
+  right: 96px; /* Posiciona antes del espacio de las flechas */
+  background: linear-gradient(to left, #0d0d0d 5%, #0d0d0d00 95%);
 }
