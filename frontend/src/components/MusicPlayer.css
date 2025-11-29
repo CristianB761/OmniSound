@@ -1,270 +1,306 @@
-/* Contenedor principal del reproductor */
-.music-player {
-  position: fixed;
-  bottom: 0;
-  left: 280px;
-  right: 0;
-  height: 90px;
-  background-color: #1a1a1a;
-  border-top: 1px solid #2a2a2a;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  color: #fff;
-  z-index: 100;
+/* Evita que el usuario pueda seleccionar texto en el musicplayer */
+.musicplayer,
+.musicplayer * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
 }
 
-/* Sección izquierda - Información de la canción */
-.song-info-section {
+/* ===== CONTENEDOR DEL MUSICPLAYER ===== */
+.musicplayer {
+  position: fixed; /* Musicplayer fijo en la parte inferior */
+  bottom: 0; /* Posicionado en la parte inferior */
+  left: 280px; /* Respeta el ancho del sidebar */
+  right: 0;/* Ocupa todo el ancho restante */
+  height: 90px; /* Altura fija del reproductor */
+  background-color: #121212; /* Color fondo oscuro consistente con el sidebar */
+  border-top: 1px solid #2c2c2c; /* Línea divisoria superior */
   display: flex;
   align-items: center;
-  flex: 1;
+  justify-content: space-between; /* Distribuye las tres secciones */
+  padding: 0 20px;
+  z-index: 100; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Sección izquierda */
+.left-section {
+  display: flex;
+  align-items: center;
+  flex: 1; /* Ocupa una parte del espacio disponible */
+  min-width: 180px; /* Ancho mínimo para mantener legibilidad */
+  max-width: 250px; /* Ancho máximo para evitar que crezca demasiado */
+}
+
+/* Sección central */
+.center-section {
+  display: flex;
+  flex-direction: column; /* Botones arriba, barra de progreso abajo */
+  align-items: center;
+  flex: 2; /* Ocupa dos partes del espacio (más ancho) */
+  max-width: 500px;
+  min-width: 400px; /* Ancho mínimo para que los controles no se compriman */
+}
+
+/* Sección derecha */
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Alinea los controles a la derecha */
+  flex: 1; /* Ocupa una parte del espacio disponible */
   min-width: 180px;
   max-width: 250px;
+  gap: 16px; /* Espacio entre los controles */
 }
 
+/* ===== INFORMACIÓN DE LA CANCIÓN ACTUAL ===== */
 /* Imagen de la canción */
-.album-image {
+.song-image {
   width: 56px;
   height: 56px;
-  background-color: #333;
+  background-color: #2c2c2c; /* Color temporal hasta que cargue la imagen */
   border-radius: 4px;
-  margin-right: 12px;
-  flex-shrink: 0;
+  margin-right: 12px; /* Separación con los detalles de la canción */
+  flex-shrink: 0; /* Evita que la imagen se reduzca */
 }
 
-/* Detalles de la canción */
+/* Contenedor de texto para título y artista */
 .song-details {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1; /* Ocupa el espacio restante disponible */
   min-width: 0; /* Permite que el texto se trunque correctamente */
-  margin-right: 8px;
+  margin-right: 8px; /* Separación con el botón de me gusta */
 }
 
+/* Título de la canción */
 .song-title {
   font-size: 14px;
   font-weight: bold;
-  color: #fff;
+  color: lightgray;
   margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap; /* Evita salto de línea */
+  overflow: hidden; /* Oculta el texto que sobresale */
+  text-overflow: ellipsis; /* Muestra "..." cuando el texto es muy largo */
 }
 
+/* Artista de la canción */
 .song-artist {
   font-size: 12px;
-  color: #b3b3b3;
+  color: dimgray;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Icono de corazón */
-.heart-icon {
-  margin-left: 8px;
-  color: #b3b3b3;
+/* ===== ESTILOS PARA LOS BOTONES ===== */
+.like-button,
+.shuffle-button,
+.previous-button,
+.next-button,
+.repeat-button,
+.volume-button,
+.lyric-button,
+.queue-button,
+.play-pause-button {
+  background: none; /* Sin fondo */
+  border: none; /* Sin borde */
+  color: lightgray; /* Color base de los botones */
   cursor: pointer;
-  font-size: 18px;
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  padding: 0;
-  transition: none;
-}
-
-.heart-icon:hover {
-  color: #10b981; /* Verde al pasar el cursor */
-  transform: none;
-}
-
-.heart-icon.liked {
-  color: #10b981; /* Verde cuando está activo */
-}
-
-/* Sección central - Controles de reproducción */
-.playback-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 2;
-  max-width: 500px;
-  min-width: 400px;
-}
-
-/* Botones de control principales */
-.control-buttons {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
-  gap: 8px;
 }
 
-.control-button {
-  background: none;
-  border: none;
-  color: #b3b3b3;
-  cursor: pointer;
+/* Botones regulares con padding */
+.like-button,
+.shuffle-button,
+.previous-button,
+.next-button,
+.repeat-button,
+.volume-button,
+.lyric-button,
+.queue-button {
   padding: 6px;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.3s ease;
-}
-
-.control-button:hover {
-  color: #fff;
-}
-
-/* Botones para anterior/siguiente */
-.control-button-prev-next {
-  font-size: 24px;
-  width: 32px;
-  height: 32px;
 }
 
 /* Botón de play/pause */
 .play-pause-button {
-  background-color: #fff;
-  color: #000;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0; /* Mantiene su tamaño sin reducirse */
+}
+
+/* ===== CONTENEDOR DE REPRODUCCIÓN ===== */
+.control-buttons {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
-  transition: color 0.3s ease;
-  flex-shrink: 0;
+  margin-bottom: 12px; /* Espacio antes de la barra de progreso */
+  gap: 8px; /* Espacio entre botones */
 }
 
-.play-pause-button:hover {
-  color: #666;
-}
-
-/* Barra de progreso */
+/* Contenedor de la barra de progreso y tiempos */
 .progress-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px;
+  justify-content: space-between; /* Tiempos a los extremos, barra en medio */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  gap: 12px; /* Espacio entre elementos */
 }
 
-.time-display {
+/* Estilos para los tiempos (actual y total) */
+.elapsed-time,
+.total-duration {
   font-size: 12px;
-  color: #b3b3b3;
-  min-width: 35px;
+  color: lightgray;
+  min-width: 35px; /* Ancho mínimo para mantener alineación */
   text-align: center;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums; /* Usa números de ancho fijo para mejor alineación */
 }
 
+/* Barra de progreso base (fondo) */
 .progress-bar {
-  flex: 1;
+  flex: 1; /* Ocupa todo el espacio disponible entre tiempos */
   height: 4px;
-  background-color: #5e5e5e;
+  background-color: dimgray; /* Color de fondo de la barra */
   border-radius: 2px;
-  position: relative;
-  cursor: pointer;
-  min-width: 300px;
+  cursor: pointer; /* Indica que es interactiva */
+  min-width: 300px; /* Ancho mínimo para buena usabilidad */
 }
 
+/* Progreso actual (parte coloreada de la barra) */
 .progress {
   height: 100%;
-  background-color: #10b981;
+  background-color: lightseagreen; /* Color del progreso */
   border-radius: 2px;
-  width: 9%;
+  width: 9%; /* Porcentaje actual del progreso (ejemplo: 9%) */
 }
 
-/* Grupo de letra y cola */
-.lyrics-queue-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Sección derecha - Controles adicionales */
-.additional-controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 1;
-  min-width: 180px;
-  max-width: 250px;
-  gap: 16px;
-}
-
-.control-icon {
-  background: none;
-  border: none;
-  color: #b3b3b3;
-  cursor: pointer;
-  padding: 6px;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.3s ease;
-}
-
-.control-icon:hover {
-  color: #fff;
-}
-
-/* Control de volumen */
+/* ===== CONTENEDOR DEL VOLUMEN INTERACTIVO ===== */
 .volume-control {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px; /* Espacio entre botón y barra */
 }
 
+/* Barra de volumen interactiva base (fondo) */
 .volume-bar {
   width: 80px;
   height: 4px;
-  background-color: #5e5e5e;
+  background-color: dimgray; /* Color de fondo de la barra de volumen */
   border-radius: 2px;
   cursor: pointer;
+  position: relative; /* Para posicionar el thumb de forma absoluta */
 }
 
+/* Nivel actual de volumen (parte coloreada) */
 .volume-level {
   height: 100%;
-  background-color: #10b981;
+  background-color: lightseagreen;
   border-radius: 2px;
-  width: 70%;
+  width: 100%; /* Se ajusta dinámicamente según el volumen */
+  position: relative;  /* Para posicionar el thumb */
 }
 
-/* Tooltips personalizados */
-.tooltip-container {
-  position: relative;
-}
-
-.tooltip-container::before {
-  content: attr(data-tooltip);
+/* Control deslizante de la barra de volumen */
+.volume-thumb {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #2a2a2a;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 1000;
-  pointer-events: none;
+  right: -6px; /* Centra el thumb en el extremo del nivel */
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical perfecto */
+  width: 12px;
+  height: 12px;
+  background-color: lightseagreen;
+  border-radius: 50%;
+  opacity: 0; /* Invisible por defecto */
 }
 
-.tooltip-container:hover::before {
+/* Muestra el thumb al interactuar con la barra de volumen */
+.volume-bar:hover .volume-thumb,
+.volume-bar:active .volume-thumb {
+  opacity: 1;
+}
+
+/* ===== TAMAÑOS Y ESTILOS DE LOS ICONOS ===== */
+.like-icon,
+.shuffle-icon,
+.previous-icon,
+.next-icon,
+.repeat-icon,
+.repeat-once-icon,
+.lyric-icon,
+.queue-icon,
+.volume-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Iconos de play/pause */
+.play-icon,
+.pause-icon {
+  width: 38px;
+  height: 38px;
+}
+
+/* Ajuste visual para el icono de play */
+.play-icon {
+  transform: scale(1.16); /* Ligeramente más grande para balance visual */
+}
+
+/* ===== TOOLTIPS ===== */
+[data-tooltip] {
+  position: relative;  /* Para posicionar el tooltip de forma absoluta */
+}
+
+/* Estilo del tooltip que se muestra al hacer hover */
+[data-tooltip]::before {
+  content: attr(data-tooltip); /* Toma el texto del atributo data-tooltip */
+  position: absolute;
+  bottom: 100%; /* Posiciona arriba del elemento */
+  left: 50%;
+  transform: translateX(-50%); /* Centrado horizontal */
+  background-color: #2c2c2c;
+  color: ghostwhite;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap; /* Evita salto de línea */
+  opacity: 0; /* Invisible por defecto */
+  visibility: hidden; /* Oculta completamente cuando no se usa */
+  transition: opacity 0.3s ease;
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  pointer-events: none; /* No intercepta eventos del mouse */
+  margin-bottom: 4px; /* Separación con el elemento */
+}
+
+/* Muestra el tooltip al hacer hover */
+[data-tooltip]:hover::before {
   opacity: 1;
   visibility: visible;
-  transition-delay: 0.5s;
+}
+
+/* Efecto hover para todos los botones */
+.like-button:hover,
+.shuffle-button:hover,
+.previous-button:hover,
+.next-button:hover,
+.repeat-button:hover,
+.play-pause-button:hover,
+.volume-button:hover,
+.lyric-button:hover,
+.queue-button:hover {
+  color: ghostwhite;
+}
+
+/* Estado activo para botones con funcionalidad de alternar */
+.like-button.active,
+.shuffle-button.active,
+.repeat-button.active,
+.volume-button.active,
+.lyric-button.active,
+.queue-button.active {
+  color: lightseagreen;
 }
