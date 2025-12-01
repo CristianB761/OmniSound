@@ -118,8 +118,8 @@ function SideBar() {
 
           {/* Botón Siguiendo con ícono */}
           <button 
-            className="sidebar-following-button"
-            onClick={() => handleButtonClick('Siguiendo')}
+            className={`sidebar-following-button ${isActive('/following') ? 'active' : ''}`}
+            onClick={() => handleNavigation('/following')}
           >
             <FollowingIcon className="sidebar-following-icon" />
             <span>Siguiendo</span>

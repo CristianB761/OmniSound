@@ -167,7 +167,8 @@
 
 /* Estado activo para botones con navegación */
 .sidebar-foryou-button.active,
-.sidebar-explore-button.active {
+.sidebar-explore-button.active,
+.sidebar-following-button.active {
   background-color: lightseagreen;
   color: #121212;
 }

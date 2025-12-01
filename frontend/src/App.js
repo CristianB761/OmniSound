@@ -7,6 +7,8 @@ import SignIn from './components/SignIn';
 import ForgotPassword from './components/ForgotPassword';
 import SignUp from './components/SignUp';
 import Explore from './components/Explore';
+import Following from './components/Following';
+import Upload from './components/Upload';
 import './App.css';
 
 // Layout para páginas con sidebar y musicplayer
@@ -50,6 +52,13 @@ function App() {
           <Route path="/explore" element={
             <MainLayout>
               <Explore />
+            </MainLayout>
+          } />
+
+          {/* Ruta para Siguiendo */}
+          <Route path="/following" element={
+            <MainLayout>
+              <Following />
             </MainLayout>
           } />
 

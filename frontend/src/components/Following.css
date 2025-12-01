@@ -1,0 +1,27 @@
+/* Evita que el usuario pueda seleccionar texto en todo el following */
+.following-container, 
+.following-container * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
+}
+
+/* ===== CONTENEDOR DEL FOLLOWING ===== */
+.following-container {
+  flex: 1; /* Ocupa todo el espacio disponible restante */
+  padding: 40px;
+  background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el sidebar */
+  min-height: 100vh; /* Altura mínima de toda la ventana */
+}
+
+/* Título de la sección */
+.following-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: lightgray;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2c2c2c; /* Línea divisoria debajo del título */
+  margin-bottom: 32px; /* Espacio después del título */
+  letter-spacing: 0.5px; /* Espaciado entre letras para mejor legibilidad */
+}
