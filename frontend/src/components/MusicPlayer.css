@@ -168,6 +168,7 @@
   border-radius: 2px;
   cursor: pointer; /* Indica que es interactiva */
   min-width: 300px; /* Ancho mínimo para buena usabilidad */
+  position: relative; /* Para posicionar el thumb de forma absoluta */
 }
 
 /* Progreso actual (parte coloreada de la barra) */
@@ -175,7 +176,27 @@
   height: 100%;
   background-color: lightseagreen; /* Color del progreso */
   border-radius: 2px;
-  width: 9%; /* Porcentaje actual del progreso (ejemplo: 9%) */
+  position: relative; /* Para posicionar el thumb */
+  width: 0%; /* Inicialmente en 0%, se actualiza dinámicamente */
+}
+
+/* Control deslizante de la barra de progreso */
+.progress-thumb {
+  position: absolute;
+  right: -6px; /* Centra el thumb en el extremo del progreso */
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical perfecto */
+  width: 12px;
+  height: 12px;
+  background-color: lightseagreen;
+  border-radius: 50%;
+  opacity: 0; /* Invisible por defecto */
+}
+
+/* Muestra el thumb al interactuar con la barra de progreso */
+.progress-bar:hover .progress-thumb,
+.progress-bar:active .progress-thumb {
+  opacity: 1;
 }
 
 /* ===== CONTENEDOR DEL VOLUMEN INTERACTIVO ===== */

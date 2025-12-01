@@ -24,11 +24,23 @@ function MusicPlayer() {
   const [isShuffled, setIsShuffled] = useState(false); // Modo aleatorio
   const [repeatMode, setRepeatMode] = useState('off'); // Modo repetir: 'off', 'repeat-all', 'repeat-once'
   const [volume, setVolume] = useState(100); // Nivel de volumen de 0 a 100
-  const [isDragging, setIsDragging] = useState(false); // Para arrastrar la barra de volumen
+  const [isDraggingVolume, setIsDraggingVolume] = useState(false); // Para arrastrar la barra de volumen
+  const [isDraggingProgress, setIsDraggingProgress] = useState(false); // Para arrastrar la barra de progreso de la canción
   const [showLyric, setShowLyric] = useState(false); // Controla la visualización de la letra
   const [showQueue, setShowQueue] = useState(false); // Controla la visualización de la cola
+  const [currentTime, setCurrentTime] = useState(0); // Tiempo actual de la canción en segundos
+  const [duration, setDuration] = useState(180); // Duración total de la canción en segundos (3 minutos)
 
   const volumeBarRef = useRef(null); // Referencia para la barra de volumen
+  const progressBarRef = useRef(null); // Referencia para la barra de progreso
+  const progressIntervalRef = useRef(null); // Referencia para el intervalo de progreso de la canción
+
+  // Función para formatear el tiempo
+  const formatTime = useCallback((seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }, []);
 
   // Función para alternar entre play y pause
   const togglePlayPause = useCallback(() => {
@@ -121,21 +133,75 @@ function MusicPlayer() {
     }
   }, [isMuted]);
 
+  // Función para actualizar el progreso de la canción basado en la posición del click/arrastre
+  const updateProgress = useCallback((clientX) => {
+    if (!progressBarRef.current) return;
+
+    // Calcula el nuevo tiempo basado en la posición del ratón
+    const rect = progressBarRef.current.getBoundingClientRect();
+    let newProgress = ((clientX - rect.left) / rect.width) * duration;
+    newProgress = Math.max(0, Math.min(duration, newProgress)); // Limita entre 0 y la duración total
+
+    setCurrentTime(newProgress);
+  }, [duration]);
+
   // Manejadores de eventos del ratón para el control de volumen por arrastre
   const handleVolumeMouseDown = useCallback((e) => {
-    setIsDragging(true);
+    setIsDraggingVolume(true);
     updateVolume(e.clientX);
   }, [updateVolume]);
 
   const handleVolumeMouseMove = useCallback((e) => {
-    if (isDragging) {
+    if (isDraggingVolume) {
       updateVolume(e.clientX);
     }
-  }, [isDragging, updateVolume]);
+  }, [isDraggingVolume, updateVolume]);
 
   const handleVolumeMouseUp = useCallback(() => {
-    setIsDragging(false);
+    setIsDraggingVolume(false);
   }, []);
+
+  // Manejadores de eventos del ratón para el control de progreso de la canción por arrastre
+  const handleProgressMouseDown = useCallback((e) => {
+    setIsDraggingProgress(true);
+    updateProgress(e.clientX);
+  }, [updateProgress]);
+
+  const handleProgressMouseMove = useCallback((e) => {
+    if (isDraggingProgress) {
+      updateProgress(e.clientX);
+    }
+  }, [isDraggingProgress, updateProgress]);
+
+  const handleProgressMouseUp = useCallback(() => {
+    setIsDraggingProgress(false);
+  }, []);
+
+  // Efecto para manejar el progreso de la canción cuando está reproduciéndose
+  useEffect(() => {
+    if (isPlaying && !isDraggingProgress) {
+      progressIntervalRef.current = setInterval(() => {
+        setCurrentTime(prevTime => {
+          const newTime = prevTime + 1;
+          
+          // Si llegamos al final de la canción
+          if (newTime >= duration) {
+            clearInterval(progressIntervalRef.current);
+            setIsPlaying(false); // Pausa la canción
+            return 0; // Reinicia al inicio
+          }
+          
+          return newTime;
+        });
+      }, 1000);
+    } else {
+      clearInterval(progressIntervalRef.current);
+    }
+
+    return () => {
+      clearInterval(progressIntervalRef.current);
+    };
+  }, [isPlaying, isDraggingProgress, duration]);
 
   // Efecto para manejar los shortcuts de teclado
   useEffect(() => {
@@ -169,7 +235,7 @@ function MusicPlayer() {
 
   // Efecto para manejar el arrastre global del volumen
   useEffect(() => {
-    if (isDragging) {
+    if (isDraggingVolume) {
       // Agrega los event listeners globales cuando se está arrastrando
       document.addEventListener('mousemove', handleVolumeMouseMove);
       document.addEventListener('mouseup', handleVolumeMouseUp);
@@ -179,7 +245,21 @@ function MusicPlayer() {
         document.removeEventListener('mouseup', handleVolumeMouseUp);
       };
     }
-  }, [isDragging, handleVolumeMouseMove, handleVolumeMouseUp]);
+  }, [isDraggingVolume, handleVolumeMouseMove, handleVolumeMouseUp]);
+
+  // Efecto para manejar el arrastre global del progreso de la canción
+  useEffect(() => {
+    if (isDraggingProgress) {
+      // Agrega los event listeners globales cuando se está arrastrando
+      document.addEventListener('mousemove', handleProgressMouseMove);
+      document.addEventListener('mouseup', handleProgressMouseUp);
+      // Limpia los event listeners globales cuando se deja de arrastrar
+      return () => {
+        document.removeEventListener('mousemove', handleProgressMouseMove);
+        document.removeEventListener('mouseup', handleProgressMouseUp);
+      };
+    }
+  }, [isDraggingProgress, handleProgressMouseMove, handleProgressMouseUp]);
 
   return (
     <div className="musicplayer">
@@ -188,8 +268,8 @@ function MusicPlayer() {
       <div className="left-section">
         <div className="song-image"></div> {/* Imagen de la canción */}
         <div className="song-details">
-          <div className="song-title">GATA ONLY ft. Cris MJ</div> {/* Título de la canción */}
-          <div className="song-artist">FloyyMenor</div> {/* Artista de la canción */}
+          <div className="song-title">Canción Famosa ft. Arstista</div> {/* Título de la canción */}
+          <div className="song-artist">Artista</div> {/* Artista de la canción */}
         </div>
         {/* Botón Like - Cambia de ícono según el estado */}
         <button 
@@ -247,11 +327,20 @@ function MusicPlayer() {
 
         {/* Barra de progreso de la canción */}
         <div className="progress-container">
-          <div className="elapsed-time">0:18</div> {/* Tiempo transcurrido */}
-          <div className="progress-bar">
-            <div className="progress"></div> {/* Progreso actual */}
+          <div className="elapsed-time">{formatTime(currentTime)}</div> {/* Tiempo transcurrido dinámico */}
+          <div 
+            className="progress-bar"
+            ref={progressBarRef}
+            onMouseDown={handleProgressMouseDown}
+          >
+            <div 
+              className="progress" 
+              style={{ width: `${(currentTime / duration) * 100}%` }} // Progreso actual dinámico
+            >
+              <div className="progress-thumb"></div> {/* Control deslizante */}
+            </div>
           </div>
-          <div className="total-duration">3:36</div> {/* Duración total */}
+          <div className="total-duration">{formatTime(duration)}</div> {/* Duración total */}
         </div>
       </div>
 
