@@ -1,0 +1,134 @@
+/* Evita que el usuario pueda seleccionar texto en todo el upload */
+.upload-container, 
+.upload-container * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
+}
+
+/* ===== CONTENEDOR DEL UPLOAD ===== */
+.upload-container {
+  flex: 1; /* Ocupa todo el espacio disponible restante */
+  padding: 40px;
+  background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el sidebar */
+  min-height: 100vh; /* Altura mínima de toda la ventana */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== ÍCONO ===== */
+.upload-cloud-icon {
+  width: 64px; /* Tamaño del ícono */
+  height: 64px;
+  color: dimgray; /* Color del ícono */
+  margin-bottom: 8px; /* Espacio entre el ícono y el texto */
+  transition: color 0.3s ease; /* Transición suave para efectos */
+}
+
+/* Efecto hover en el ícono cuando se hace hover en el dropzone */
+.upload-dropzone:hover .upload-cloud-icon {
+  color: darkgray; /* Cambia color del ícono al hacer hover */
+}
+
+/* Título de la sección */
+.upload-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: lightgray;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2c2c2c; /* Línea divisoria debajo del título */
+  margin-bottom: 32px; /* Espacio después del título */
+  letter-spacing: 0.5px; /* Espaciado entre letras para mejor legibilidad */
+}
+
+/* ===== CONTENIDO ===== */
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px; /* Espacio entre secciones */
+  flex: 1; /* Ocupa todo el espacio disponible */
+}
+
+/* ===== ÁREA DE ARRASTRAR Y SOLTAR ===== */
+.upload-dropzone {
+  border: 2px dashed #2c2c2c; /* Borde punteado */
+  border-radius: 8px; /* Esquinas redondeadas */
+  padding: 60px 40px; /* Espaciado interno generoso */
+  text-align: center; /* Centra el contenido */
+  background-color: #121212; /* Fondo ligeramente más claro */
+  transition: all 0.3s ease;
+  flex: 1; /* Ocupa todo el espacio vertical disponible */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente el contenido */
+  align-items: center; /* Centra horizontalmente el contenido */
+  min-height: 400px; /* Altura mínima */
+}
+
+/* Efecto hover en el área de dropzone */
+.upload-dropzone:hover {
+  background-color: #1e1e1e; /* Fondo ligeramente más claro al hacer hover */
+  border-color: dimgray; /* Cambia color del borde al hacer hover */
+}
+
+/* Texto del área de dropzone */
+.upload-dropzone-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: dimgray;
+  margin-bottom: 20px;
+  transition: color 0.3s ease;
+}
+
+/* Efecto hover en el texto cuando se hace hover en el dropzone */
+.upload-dropzone:hover .upload-dropzone-text {
+  color: darkgray; /* Cambia a ghostwhite al hacer hover */
+}
+
+/* ===== BOTÓN ELEGIR ARCHIVOS ===== */
+.upload-choose-button {
+  background-color: lightseagreen;
+  color: #121212;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover del botón */
+.upload-choose-button:hover {
+  background-color: teal;
+  color: #0d0d0d;
+}
+
+/* ===== CONTENEDOR DE SECCIONES DE INFORMACIÓN ===== */
+.upload-info-sections-row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px; /* Espacio entre secciones */
+}
+
+/* ===== SECCIONES DE INFORMACIÓN ===== */
+.upload-info-section {
+  flex: 1; /* Cada sección ocupa el mismo ancho */
+  padding: 0;
+}
+
+/* Títulos de las secciones de información */
+.upload-info-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: darkgray;
+  margin-bottom: 8px;
+}
+
+/* Texto de las secciones de información */
+.upload-info-text {
+  font-size: 14px;
+  color: dimgray;
+  line-height: 1.5; /* Mejor legibilidad */
+}

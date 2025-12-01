@@ -127,8 +127,8 @@ function SideBar() {
 
           {/* Botón Subir con ícono */}
           <button 
-            className="sidebar-upload-button"
-            onClick={() => handleButtonClick('Subir')}
+            className={`sidebar-upload-button ${isActive('/upload') ? 'active' : ''}`}
+            onClick={() => handleNavigation('/upload')}
           >
             <UploadIcon className="sidebar-upload-icon" />
             <span>Subir</span>

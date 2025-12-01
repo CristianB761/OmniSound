@@ -22,6 +22,16 @@ const MainLayout = ({ children }) => {
   );
 };
 
+// Layout para páginas solo con sidebar
+const UploadLayout = ({ children }) => {
+  return (
+    <>
+      <SideBar />
+      {children}
+    </>
+  );
+};
+
 // Layout para páginas sin sidebar y musicplayer
 const AuthLayout = ({ children }) => {
   return (
@@ -60,6 +70,14 @@ function App() {
             <MainLayout>
               <Following />
             </MainLayout>
+          } />
+
+          {/* ===== UPLOADLAYOUT ===== */}
+          {/* Ruta para Subir */}
+          <Route path="/upload" element={
+            <UploadLayout>
+              <Upload />
+            </UploadLayout>
           } />
 
           {/* ===== AUTHLAYOUT ===== */}
