@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './SideBar.css';
 
 // Importar iconos como componentes React
 import { ReactComponent as SearchIcon } from '../icons/SearchIcon.svg';
+import { ReactComponent as CleanInputIcon } from '../icons/CleanInputIcon.svg';
 import { ReactComponent as ForYouIcon } from '../icons/ForYouIcon.svg';
 import { ReactComponent as ExploreIcon } from '../icons/ExploreIcon.svg';
 import { ReactComponent as FollowingIcon } from '../icons/FollowingIcon.svg';
@@ -14,6 +15,7 @@ function SideBar() {
   const searchInputRef = useRef(null); // Referencia para acceder al input de búsqueda directamente
   const location = useLocation(); // Hook para obtener la ruta actual
   const navigate = useNavigate(); // Hook para navegar entre páginas
+  const [searchValue, setSearchValue] = useState(''); // Controla el texto del input
 
   // Efecto para manejar el shortcut de teclado
   useEffect(() => {
@@ -51,6 +53,19 @@ function SideBar() {
     navigate(path);
   };
 
+  // Función para manejar cambios en el input de búsqueda
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  // Función para limpiar el input de búsqueda
+  const handleCleanInputIcon = () => {
+    setSearchValue(''); // Reinicia el estado de búsqueda
+    if (searchInputRef.current) {
+      searchInputRef.current.focus(); // Mantiene el foco en el input después de limpiar
+    }
+  };
+
   return (
     <div className="sidebar">
 
@@ -63,8 +78,21 @@ function SideBar() {
           type="text" 
           className="sidebar-search" 
           placeholder="Buscar"
+          value={searchValue} // Texto actual del input
+          onChange={handleSearchChange} // Maneja cambios en el input
         />
         <SearchIcon className="sidebar-search-icon" />
+
+        {/* Botón para limpiar input - Se muestra solo cuando hay texto */}
+        {searchValue && (
+          <button 
+            className="sidebar-clean-input-button"
+            onClick={handleCleanInputIcon} // Ejecuta la función de limpiar input
+            type="button"
+          >
+            <CleanInputIcon className="sidebar-clean-input-icon" />
+          </button>
+        )}
       </div>
 
       {/* Menú de navegación */}
