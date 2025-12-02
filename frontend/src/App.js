@@ -8,6 +8,7 @@ import ForgotPassword from './components/ForgotPassword';
 import SignUp from './components/SignUp';
 import Explore from './components/Explore';
 import Following from './components/Following';
+import Notifications from './components/Notifications';
 import Upload from './components/Upload';
 import Profile from './components/Profile';
 import './App.css';
@@ -73,6 +74,12 @@ function App() {
             </MainLayout>
           } />
 
+          {/* Ruta para Notificaciones */}
+          <Route path="/notifications" element={
+            <MainLayout>
+              <Notifications />
+            </MainLayout>
+          } />
 
           {/* Ruta para Perfil */}
           <Route path="/profile" element={

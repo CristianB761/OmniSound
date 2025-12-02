@@ -8,6 +8,7 @@ import { ReactComponent as CleanInputIcon } from '../icons/CleanInputIcon.svg';
 import { ReactComponent as ForYouIcon } from '../icons/ForYouIcon.svg';
 import { ReactComponent as ExploreIcon } from '../icons/ExploreIcon.svg';
 import { ReactComponent as FollowingIcon } from '../icons/FollowingIcon.svg';
+import { ReactComponent as NotificationsIcon } from '../icons/NotificationsIcon.svg';
 import { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg';
 import { ReactComponent as ProfileIcon } from '../icons/ProfileIcon.svg';
 
@@ -123,6 +124,15 @@ function SideBar() {
           >
             <FollowingIcon className="sidebar-following-icon" />
             <span>Siguiendo</span>
+          </button>
+
+          {/* Botón Notificaciones con ícono */}
+          <button 
+            className={`sidebar-notifications-button ${isActive('/notifications') ? 'active' : ''}`}
+            onClick={() => handleNavigation('/notifications')}
+          >
+            <NotificationsIcon className="sidebar-notifications-icon" />
+            <span>Notificaciones</span>
           </button>
 
           {/* Botón Subir con ícono */}
