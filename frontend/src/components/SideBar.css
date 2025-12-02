@@ -126,7 +126,8 @@
 .sidebar-following-button,
 .sidebar-notifications-button,
 .sidebar-upload-button,
-.sidebar-profile-button {
+.sidebar-profile-button,
+.sidebar-signout-button {
   background-color: transparent;
   color: lightgray;
   border: none;
@@ -150,7 +151,8 @@
 .sidebar-following-icon,
 .sidebar-notifications-icon,
 .sidebar-upload-icon,
-.sidebar-profile-icon {
+.sidebar-profile-icon,
+.sidebar-signout-icon {
   width: 20px;
   height: 20px;
   color: inherit; /* Hereda el color del botón padre */
@@ -163,7 +165,8 @@
 .sidebar-following-button:hover,
 .sidebar-notifications-button:hover,
 .sidebar-upload-button:hover,
-.sidebar-profile-button:hover {
+.sidebar-profile-button:hover,
+.sidebar-signout-button:hover {
   background-color: #2c2c2c;
   color: ghostwhite;
 }

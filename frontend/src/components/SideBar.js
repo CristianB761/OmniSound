@@ -11,6 +11,7 @@ import { ReactComponent as FollowingIcon } from '../icons/FollowingIcon.svg';
 import { ReactComponent as NotificationsIcon } from '../icons/NotificationsIcon.svg';
 import { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg';
 import { ReactComponent as ProfileIcon } from '../icons/ProfileIcon.svg';
+import { ReactComponent as SignOutIconIcon } from '../icons/SignOutIcon.svg';
 
 function SideBar() {
   const searchInputRef = useRef(null); // Referencia para acceder al input de búsqueda directamente
@@ -151,6 +152,15 @@ function SideBar() {
           >
             <ProfileIcon className="sidebar-profile-icon" />
             <span>Perfil</span>
+          </button>
+
+          {/* Botón Cerrar sesión con ícono */}
+          <button 
+            className="sidebar-signout-button"
+            onClick={() => handleButtonClick('Cerrar sesión')}
+          >
+            <SignOutIconIcon className="sidebar-signout-icon" />
+            <span>Cerrar sesión</span>
           </button>
         </div>
       </nav>
