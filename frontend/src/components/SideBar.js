@@ -136,8 +136,8 @@ function SideBar() {
 
           {/* Botón Perfil con ícono */}
           <button 
-            className="sidebar-profile-button"
-            onClick={() => handleButtonClick('Perfil')}
+            className={`sidebar-profile-button ${isActive('/profile') ? 'active' : ''}`}
+            onClick={() => handleNavigation('/profile')}
           >
             <ProfileIcon className="sidebar-profile-icon" />
             <span>Perfil</span>

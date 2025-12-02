@@ -169,7 +169,8 @@
 .sidebar-foryou-button.active,
 .sidebar-explore-button.active,
 .sidebar-following-button.active,
-.sidebar-upload-button.active {
+.sidebar-upload-button.active,
+.sidebar-profile-button.active {
   background-color: lightseagreen;
   color: #121212;
 }

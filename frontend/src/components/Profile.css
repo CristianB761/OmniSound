@@ -1,0 +1,245 @@
+/* Evita que el usuario pueda seleccionar texto en el profile */
+.profile-container,
+.profile-container * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
+}
+
+/* ===== CONTENEDOR DEL PROFILE ===== */
+.profile-container {
+  flex: 1; /* Ocupa todo el espacio disponible restante */
+  padding: 40px;
+  background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el sidebar */
+  min-height: 100vh; /* Altura mínima de toda la ventana */
+}
+
+/* ===== ENCABEZADO DEL PERFIL ===== */
+.profile-header {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 40px;
+  align-items: flex-start;
+}
+
+/* Imagen circular del perfil */
+.profile-image-circle {
+  width: 160px;
+  height: 160px;
+  background-color: #1e1e1e; /* Color temporal hasta que cargue la imagen */
+  border-radius: 50%;
+  flex-shrink: 0; /* Evita que la imagen se reduzca */
+}
+
+/* Información del perfil */
+.profile-info {
+  flex: 1; /* Ocupa el espacio restante disponible */
+}
+
+/* Nombre del artista */
+.profile-artist-name {
+  font-size: 28px;
+  font-weight: bold;
+  color: lightgray;
+  margin: 0 0 16px 0;
+}
+
+/* ===== BOTONES DE ACCIÓN DEL PERFIL ===== */
+.profile-action-buttons {
+  display: flex;
+  gap: 8px; /* Espacio entre botones */
+  margin-bottom: 20px;
+}
+
+/* Botón editar perfil */
+.profile-edit-button {
+  background-color: lightseagreen; /* Color sólido */
+  color: #121212;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Transición suave para todos los cambios */
+}
+
+/* Efecto hover cuando el botón está activo */
+.profile-edit-button:hover {
+  background-color: teal;
+}
+
+/* Botón Compartir */
+.profile-share-button {
+  background-color: #1e1e1e;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* Ícono dentro del botón */
+.profile-share-icon {
+  width: 20px;
+  height: 20px;
+  color: lightgray;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover para el botón */
+.profile-share-button:hover {
+  background-color: #2c2c2c;
+}
+
+.profile-share-button:hover .profile-share-icon {
+  color: ghostwhite;
+}
+
+/* ===== ESTADÍSTICAS DEL PERFIL ===== */
+.profile-stats {
+  display: flex;
+  gap: 16px; /* Espacio entre estadísticas */
+  margin-bottom: 16px;
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+}
+
+/* Textos de estadísticas */
+.profile-stat-text {
+  color: lightgray;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Enlaces de estadísticas */
+.profile-stat-link {
+  color: lightgray;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+/* Efecto hover para los enlaces */
+.profile-stat-link:hover {
+  color: ghostwhite;
+  text-decoration: underline;
+}
+
+/* ===== BIOGRAFÍA DEL ARTISTA ===== */
+.profile-bio {
+  color: lightgray;
+  font-size: 16px;
+  line-height: 1.5; /* Mejor legibilidad del texto */
+}
+
+/* ===== CONTENEDOR DE SECCIONES Y FILTROS ===== */
+.profile-sections-container {
+  display: flex;
+  justify-content: space-between; /* Distribuye secciones a la izquierda y acciones a la derecha */
+  align-items: center;
+  border-bottom: 1px solid #2c2c2c; /* Línea divisoria debajo del contenedor */
+  margin-bottom: 24px; /* Espacio después del contenedor */
+  padding-bottom: 4px;
+}
+
+/* ===== NAVEGACIÓN DE SECCIONES ===== */
+.profile-sections-nav {
+  display: flex;
+}
+
+/* Botones de sección */
+.profile-section-button {
+  background: none; /* Sin fondo */
+  border: none; /* Sin borde */
+  color: dimgray;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative; /* Para posicionar el indicador activo de forma absoluta */
+}
+
+/* Efecto hover para los botones de sección */
+.profile-section-button:hover {
+  color: lightgray;
+}
+
+/* Estado activo para botones de sección seleccionados */
+.profile-section-button.active {
+  color: lightseagreen;
+}
+
+/* Indicador visual de sección activa */
+.profile-section-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; /* Posicionado justo debajo del botón */
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: lightseagreen;
+}
+
+/* ===== CONTENEDOR PARA ACCIONES ESPECÍFICAS DE SECCIÓN ===== */
+.profile-section-actions {
+  display: flex;
+  gap: 8px; /* Espacio entre botones de acción */
+}
+
+/* ===== FILTROS DE CONTENIDO ===== */
+.profile-content-filters {
+  display: flex;
+  gap: 4px; /* Espacio entre botones de filtro */
+  margin-bottom: 0; /* Sin margen inferior ya que está dentro del contenedor */
+}
+
+/* Estilos base para botones de acción de sección */
+.profile-filter-button,
+.profile-upload-button,
+.profile-create-list-button {
+  background-color: #1e1e1e;
+  color: lightgray;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover para botones de acción de sección */
+.profile-filter-button:hover,
+.profile-upload-button:hover,
+.profile-create-list-button:hover {
+  background-color: #2c2c2c;
+  color: ghostwhite;
+}
+
+/* Estado activo solo para botones de filtro */
+.profile-filter-button.active {
+  background-color: lightseagreen;
+  color: #121212;
+}
+
+/* ===== CONTENIDO DEL PERFIL ===== */
+.profile-content {
+  background-color: #121212; /* Color de fondo ligeramente más claro que la página */
+  border-radius: 8px; /* Esquinas redondeadas */
+  padding: 40px;
+  text-align: center;
+}
+
+/* Mensaje de estado vacío */
+.profile-empty-state {
+  color: dimgray;
+  font-size: 16px;
+  margin: 0;
+}

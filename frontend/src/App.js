@@ -9,6 +9,7 @@ import SignUp from './components/SignUp';
 import Explore from './components/Explore';
 import Following from './components/Following';
 import Upload from './components/Upload';
+import Profile from './components/Profile';
 import './App.css';
 
 // Layout para páginas con sidebar y musicplayer
@@ -69,6 +70,14 @@ function App() {
           <Route path="/following" element={
             <MainLayout>
               <Following />
+            </MainLayout>
+          } />
+
+
+          {/* Ruta para Perfil */}
+          <Route path="/profile" element={
+            <MainLayout>
+              <Profile />
             </MainLayout>
           } />
 
