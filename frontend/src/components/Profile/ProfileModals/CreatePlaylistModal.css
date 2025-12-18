@@ -1,0 +1,253 @@
+/* ===== OVERLAY (FONDO OSCURO) ===== */
+.create-playlist-modal-overlay {
+  position: fixed;
+  inset: 0; /* Equivalente a top:0; left:0; right:0; bottom:0; */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  backdrop-filter: blur(2px); /* Efecto de desenfoque del fondo */
+}
+
+/* ===== MODAL (VENTANA EMERGENTE) ===== */
+.create-playlist-modal {
+  background-color: #121212;
+  border-radius: 8px;
+  width: 90%; /* Responsivo: ocupa 90% del ancho en pantallas pequeñas */
+  max-width: 500px; /* Ancho máximo en pantallas grandes */
+  max-height: 90vh; /* Altura máxima: 90% de la ventana */
+  overflow-y: auto; /* Scroll vertical si el contenido es muy largo */
+  padding: 40px;
+  position: relative;
+}
+
+/* ===== ENCABEZADO DEL MODAL ===== */
+.create-playlist-header {
+  margin-bottom: 24px;
+}
+
+.create-playlist-title {
+  color: lightgray;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+}
+
+/* ===== BOTÓN CERRAR ===== */
+.create-playlist-close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-playlist-close-icon {
+  width: 100%;
+  height: 100%;
+  color: lightgray;
+  transition: color 0.3s ease; /* Transición suave del color */
+}
+
+.create-playlist-close-button:hover .create-playlist-close-icon {
+  color: ghostwhite;
+}
+
+/* ===== FORMULARIO ===== */
+.create-playlist-form {
+  margin-bottom: 24px;
+}
+
+.create-playlist-field {
+  margin-bottom: 20px;
+}
+
+.create-playlist-label {
+  display: block;
+  color: lightgray;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Asterisco para inputs obligatorios */
+.required-asterisk {
+  color: firebrick;
+  margin-left: 2px;
+}
+
+/* ===== INPUT ===== */
+.create-playlist-input {
+  width: 100%;
+  background-color: #1e1e1e;
+  color: lightgray;
+  border: 1px solid #2c2c2c;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box; /* Incluye padding y border en el ancho total */
+  transition: border-color 0.3s ease, background-color 0.3s ease; /* Transición para hover y focus */
+}
+
+.create-playlist-input::placeholder {
+  color: dimgray;
+}
+
+/* Efecto hover cuando el input no está enfocado */
+.create-playlist-input:hover:not(:focus) {
+  border-color: dimgray;
+  background-color: #2c2c2c;
+}
+
+/* Efecto focus cuando el input está seleccionado */
+.create-playlist-input:focus {
+  outline: none; /* Elimina el outline por defecto del navegador */
+  border-color: lightseagreen; /* Color distintivo para focus */
+  background-color: #2c2c2c;
+}
+
+/* ===== GRUPO DE PRIVACIDAD EN LÍNEA ===== */
+.privacy-group {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espacio entre "Privacidad:" y los radio buttons */
+}
+
+.privacy-label {
+  color: lightgray;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap; /* Evita que se rompa en varias líneas */
+}
+
+/* ===== OPCIONES DE PRIVACIDAD ===== */
+.create-playlist-privacy-options {
+  display: flex;
+  gap: 24px;
+}
+
+.create-playlist-privacy-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* ===== RADIO BUTTONS PERSONALIZADOS ===== */
+.create-playlist-privacy-radio {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none; /* Elimina los estilos nativos del navegador */
+  border: 2px solid #444;
+  border-radius: 50%; /* Hace los inputs circulares */
+  background-color: #2c2c2c;
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+/* Radio button seleccionado */
+.create-playlist-privacy-radio:checked {
+  border-color: lightseagreen; /* Mismo color que el botón Guardar */
+}
+
+/* Círculo interior cuando está seleccionado */
+.create-playlist-privacy-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: lightseagreen;
+  border-radius: 50%; /* Círculo interior */
+}
+
+/* Efecto hover para radio button */
+.create-playlist-privacy-radio:hover {
+  border-color: #666;
+}
+
+.create-playlist-privacy-radio:checked:hover {
+  border-color: teal; /* Mismo color hover que el botón Guardar */
+}
+
+.create-playlist-privacy-radio:checked:hover::after {
+  background-color: teal; /* Mismo color hover que el botón Guardar */
+}
+
+/* Texto de privacidad */
+.create-playlist-privacy-text {
+  color: lightgray;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.create-playlist-privacy-option:hover .create-playlist-privacy-text {
+  color: ghostwhite;
+}
+
+/* ===== LÍNEA DIVISORA ===== */
+.create-playlist-divider {
+  border: none;
+  border-top: 1px solid #2c2c2c;
+  margin: 10px 0; /* Espacio antes y después de la línea */
+}
+
+/* ===== BOTONES DE ACCIÓN (CANCELAR / GUARDAR) ===== */
+.create-playlist-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+}
+
+.create-playlist-cancel-button,
+.create-playlist-save-button {
+  min-width: 120px; /* Ancho mínimo para consistencia */
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease; /* Transición suave para hover y cambios */
+}
+
+.create-playlist-cancel-button {
+  background-color: #2c2c2c;
+  color: lightgray;
+}
+
+.create-playlist-cancel-button:hover {
+  background-color: #464646;
+  color: ghostwhite;
+}
+
+.create-playlist-save-button {
+  background-color: lightseagreen;
+  color: #121212;
+}
+
+.create-playlist-save-button:hover:not(:disabled) {
+  background-color: teal; /* Color más oscuro al hacer hover */
+}
+
+/* Estilo cuando el botón está deshabilitado */
+.create-playlist-save-button:disabled {
+  background-color: #1e1e1e;
+  color: dimgray;
+  cursor: not-allowed; /* Cursor que indica que no se puede hacer clic */
+}
