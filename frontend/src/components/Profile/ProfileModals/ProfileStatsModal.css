@@ -1,0 +1,244 @@
+/* ===== OVERLAY (FONDO OSCURO) ===== */
+.profile-stats-modal-overlay {
+  position: fixed;
+  inset: 0; /* Equivalente a top:0; left:0; right:0; bottom:0; */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  backdrop-filter: blur(2px); /* Efecto de desenfoque del fondo */
+}
+
+/* ===== MODAL (VENTANA EMERGENTE) ===== */
+.profile-stats-modal {
+  background-color: #121212;
+  border-radius: 8px;
+  width: 90%; /* Responsivo: ocupa 90% del ancho en pantallas pequeñas */
+  max-width: 500px; /* Ancho máximo en pantallas grandes */
+  height: 500px; /* Altura fija para el modal */
+  overflow-y: auto; /* Scroll vertical si el contenido es muy largo */
+  padding: 40px;
+  position: relative;
+}
+
+/* ===== ENCABEZADO DEL MODAL ===== */
+.profile-stats-header {
+  margin-bottom: 16px;
+}
+
+.profile-stats-title {
+  color: lightgray;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+}
+
+/* ===== BOTÓN CERRAR ===== */
+.profile-stats-close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: lightgray;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease; /* Transición suave del color */
+}
+
+.profile-stats-close-button:hover {
+  color: ghostwhite;
+}
+
+.profile-stats-close-icon {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== PESTAÑAS DE NAVEGACIÓN ===== */
+.profile-stats-tabs {
+  display: flex;
+  border-bottom: 1px solid #333; /* Línea divisoria inferior */
+  margin-bottom: 20px;
+}
+
+.profile-stats-tab {
+  flex: 1; /* Cada pestaña ocupa el mismo espacio */
+  background: none;
+  border: none;
+  padding: 16px 20px;
+  color: #999;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease; /* Transición suave para hover y cambios */
+  position: relative; /* Para posicionar el indicador activo */
+}
+
+.profile-stats-tab:hover {
+  color: #ccc;
+}
+
+.profile-stats-tab.active {
+  color: white;
+}
+
+/* Indicador visual de pestaña activa */
+.profile-stats-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: lightseagreen;
+}
+
+/* ===== CONTENEDOR DE BÚSQUEDA ===== */
+.profile-stats-search-container {
+  position: relative; /* Para posicionar los íconos de forma absoluta */
+  margin-bottom: 24px;
+}
+
+/* ===== INPUT DE BÚSQUEDA ===== */
+.profile-stats-search {
+  width: 100%;
+  background-color: #1e1e1e;
+  border: 1px solid #2c2c2c;
+  border-radius: 4px;
+  padding: 10px 40px 10px 44px; /* Espacio para los íconos a izquierda y derecha */
+  color: lightgray;
+  font-size: 14px;
+  box-sizing: border-box; /* Incluye padding y border en el ancho total */
+  transition: all 0.3s ease; /* Transición para hover y focus */
+  height: 40px;
+}
+
+.profile-stats-search::placeholder {
+  color: dimgray;
+}
+
+/* Efecto hover cuando el input no está enfocado */
+.profile-stats-search:hover:not(:focus) {
+  border-color: dimgray;
+  background-color: #2c2c2c;
+}
+
+/* Efecto cuando el input está enfocado */
+.profile-stats-search:focus {
+  outline: none; /* Elimina el outline por defecto del navegador */
+  border-color: lightseagreen; /* Color distintivo para focus */
+  background-color: #2c2c2c;
+}
+
+/* Ícono de búsqueda dentro del input */
+.profile-stats-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical perfecto */
+  color: dimgray;
+  width: 18px;
+  height: 18px;
+  pointer-events: none; /* El ícono no interfiere con clics en el input */
+  transition: color 0.3s ease;
+}
+
+/* Cambia color del ícono cuando el input está enfocado */
+.profile-stats-search:focus + .profile-stats-search-icon {
+  color: lightseagreen;
+}
+
+/* ===== BOTÓN PARA LIMPIAR INPUT ===== */
+.profile-stats-clean-input-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical perfecto */
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%; /* Forma circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.profile-stats-clean-input-icon {
+  width: 16px;
+  height: 16px;
+  color: dimgray;
+  transition: color 0.3s ease;
+}
+
+.profile-stats-clean-input-button:hover .profile-stats-clean-input-icon {
+  color: lightgray;
+}
+
+/* ===== CONTENIDO PRINCIPAL DEL MODAL ===== */
+.profile-stats-content {
+  flex: 1; /* Ocupa el espacio disponible restante */
+  overflow-y: auto; /* Scroll vertical si hay muchos elementos */
+}
+
+/* ===== LISTA DE USUARIOS ===== */
+.profile-stats-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== ITEM DE LA LISTA ===== */
+.profile-stats-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #222; /* Línea divisoria entre items */
+  transition: background-color 0.3s ease; /* Transición suave para hover */
+}
+
+.profile-stats-list-item:last-child {
+  border-bottom: none; /* Elimina la línea del último item */
+}
+
+.profile-stats-list-item:hover {
+  background-color: #222; /* Efecto hover en cada item */
+}
+
+/* ===== ESTADO VACÍO (CUANDO NO HAY DATOS) ===== */
+.profile-stats-empty-state {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  padding: 60px 20px; /* Espaciado generoso para centrar visualmente */
+  margin: 0;
+}
+
+/* ===== SCROLLBAR PERSONALIZADA ===== */
+.profile-stats-modal::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de scroll */
+}
+
+.profile-stats-modal::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 4px;
+}
+
+.profile-stats-modal::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 4px;
+}
+
+.profile-stats-modal::-webkit-scrollbar-thumb:hover {
+  background: dimgray;
+}
