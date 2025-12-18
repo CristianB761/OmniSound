@@ -10,7 +10,7 @@ import Explore from './components/Explore';
 import Following from './components/Following';
 import Notifications from './components/Notifications';
 import Upload from './components/Upload';
-import Profile from './components/Profile';
+import Profile from './components/Profile/Profile';
 import './App.css';
 
 // Layout para páginas con sidebar y musicplayer

@@ -28,6 +28,9 @@
   width: 160px;
   height: 160px;
   background-color: #1e1e1e; /* Color temporal hasta que cargue la imagen */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 50%;
   flex-shrink: 0; /* Evita que la imagen se reduzca */
 }
@@ -37,12 +40,28 @@
   flex: 1; /* Ocupa el espacio restante disponible */
 }
 
-/* Nombre del artista */
-.profile-artist-name {
+/* ===== CONTENEDOR DE NOMBRES ===== */
+.profile-name-container {
+  display: flex;
+  align-items: baseline; /* Alinea en la misma línea base */
+  gap: 16px; /* Espacio entre nombre de usuario y nombre real */
+  margin-bottom: 16px;
+  flex-wrap: wrap; /* Permite que se acomoden en pantallas pequeñas */
+}
+
+/* Nombre de usuario del artista */
+.profile-user-name {
   font-size: 28px;
   font-weight: bold;
   color: lightgray;
-  margin: 0 0 16px 0;
+  margin: 0; /* Eliminamos el margen inferior porque ahora está en el contenedor */
+}
+
+/* Nombre real del artista */
+.profile-real-name {
+  font-size: 20px; /* Un poco más pequeño que el nombre de usuario */
+  font-weight: bold;
+  color: dimgray; /* Color más tenue para diferenciarlo */
 }
 
 /* ===== BOTONES DE ACCIÓN DEL PERFIL ===== */
@@ -119,10 +138,14 @@
 /* Enlaces de estadísticas */
 .profile-stat-link {
   color: lightgray;
+  background: none;
+  border: none;
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
   transition: color 0.3s ease;
+  cursor: pointer;
+  padding: 0;
 }
 
 /* Efecto hover para los enlaces */
@@ -203,7 +226,7 @@
 /* Estilos base para botones de acción de sección */
 .profile-filter-button,
 .profile-upload-button,
-.profile-create-list-button {
+.profile-create-playlist-button {
   background-color: #1e1e1e;
   color: lightgray;
   border: none;
@@ -218,7 +241,7 @@
 /* Efecto hover para botones de acción de sección */
 .profile-filter-button:hover,
 .profile-upload-button:hover,
-.profile-create-list-button:hover {
+.profile-create-playlist-button:hover {
   background-color: #2c2c2c;
   color: ghostwhite;
 }
