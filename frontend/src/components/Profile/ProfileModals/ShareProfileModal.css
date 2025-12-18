@@ -1,0 +1,132 @@
+/* ===== OVERLAY (FONDO OSCURO) ===== */
+.share-profile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+/* ===== MODAL (VENTANA EMERGENTE) ===== */
+.share-profile-modal {
+  background-color: #121212;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== ENCABEZADO DEL MODAL ===== */
+.share-profile-header {
+  margin-bottom: 24px;
+}
+
+.share-profile-title {
+  color: lightgray;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+}
+
+/* ===== BOTÓN CERRAR ===== */
+.share-profile-close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: lightgray;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.share-profile-close-button:hover {
+  color: ghostwhite;
+}
+
+.share-profile-close-icon {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== CONTENEDOR DE LA URL ===== */
+.share-profile-url-container {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+/* ===== INPUT DE URL ===== */
+.share-profile-url-input {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #0d0d0d;
+  border: 1px solid #2c2c2c;
+  border-radius: 6px;
+  color: lightgray;
+  font-size: 14px;
+  font-family: monospace;
+  cursor: text;
+}
+
+.share-profile-url-input:focus {
+  outline: none;
+  border-color: lightseagreen;
+}
+
+/* ===== MENSAJE DE CONFIRMACIÓN ===== */
+.share-profile-copied-message {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: lightseagreen;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ===== LÍNEA DIVISORIA ===== */
+.share-profile-separator {
+  border: none;
+  border-top: 1px solid #2c2c2c;
+  margin: 24px 0;
+}
+
+/* ===== BOTÓN DE ACCIÓN ===== */
+.share-profile-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ===== BOTÓN COPIAR ===== */
+.share-profile-copy-button {
+  background-color: lightseagreen;
+  color: #121212;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.share-profile-copy-button:hover {
+  background-color: teal;
+}
+
+/* Estilo cuando el botón está en estado "copiado" */
+.share-profile-copy-button.copied {
+  background-color: limegreen;
+}
