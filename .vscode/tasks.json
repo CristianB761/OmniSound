@@ -1,0 +1,93 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Iniciar Full Stack",
+      "dependsOn": [
+        "Backend - Node.js",
+        "Frontend - React"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend - Node.js",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Servidor backend iniciado",
+            "endsPattern": ".*"
+          }
+        }
+      ],
+      "presentation": {
+        "group": "backend",
+        "panel": "dedicated",
+        "reveal": "always",
+        "echo": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Frontend - React",
+      "type": "shell",
+      "command": "npm start",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Compiled successfully",
+            "endsPattern": ".*"
+          }
+        }
+      ],
+      "presentation": {
+        "group": "frontend",
+        "panel": "dedicated",
+        "reveal": "always",
+        "echo": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Verificar MySQL",
+      "type": "shell",
+      "command": "netstat -ano | findstr :3306",
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "panel": "shared"
+      }
+    }
+  ]
+}

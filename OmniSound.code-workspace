@@ -1,0 +1,21 @@
+{
+  "folders": [
+    {
+      "path": "frontend",
+      "name": "Frontend (React)"
+    },
+    {
+      "path": "backend",
+      "name": "Backend (Node.js)"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true
+    },
+    "editor.tabSize": 2
+  },
+  "extensions": {
+    "recommendations": []
+  }
+}

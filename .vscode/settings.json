@@ -1,0 +1,16 @@
+{
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true
+  },
+  "explorer.compactFolders": false,
+  "editor.formatOnSave": true,
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.tabs.enabled": true,
+  "terminal.integrated.persistentSessionReviveProcess": "onExitAndWindowClose",
+  "workbench.colorCustomizations": {
+    "terminal.ansiRed": "#8B0000",
+    "terminal.ansiGreen": "#006400",
+    "terminal.ansiYellow": "#DAA520"
+  }
+}
