@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const authRoutes = require('./src/routes/authRoutes');
+const { promisePool } = require('./src/config/database');
+
 const app = express();
 
 // Configurar CORS para aceptar peticiones del frontend
@@ -12,6 +15,9 @@ app.use(cors({
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+// Usar rutas de autenticación
+app.use('/api/auth', authRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

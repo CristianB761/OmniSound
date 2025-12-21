@@ -111,25 +111,51 @@ function SignUp() {
     }
   };
 
-  // Simula el envío del código de verificación por email
-  const handleSendCode = () => {
+  // Función para enviar código de verificación
+  const handleSendCode = async () => {
     if (email && isValidEmail(email) && !isCodeSent) {
-      setIsCodeSent(true);
-      console.log('Código enviado a:', email);
-      // Aquí iría la lógica real de verificación con el backend
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        if (response.ok) {
+          setIsCodeSent(true);
+          console.log('Código enviado.');
+        } else {
+          const data = await response.json();
+          console.error('Error al enviar código:', data.error);
+        }
+      } catch (error) {
+        console.error('Error de red:', error);
+      }
     }
   };
 
-  // Simula la validación del código de verificación
-  const handleVerifyCode = () => {
+  // Función para validar código
+  const handleVerifyCode = async () => {
     if (isValidCode(code)) {
-      // Simulación: Código válido es "123456"
-      if (code === '123456') { // Código de prueba
-        setIsCodeValid(true);
-        console.log('Código válido');
-      } else {
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/verify-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          setIsCodeValid(true);
+          console.log('Código válido');
+        } else {
+          setIsCodeValid(false);
+          console.log('Código no válido:', data.error);
+        }
+      } catch (error) {
+        console.error('Error de red:', error);
         setIsCodeValid(false);
-        console.log('Código no válido');
       }
     }
   };
@@ -144,14 +170,38 @@ function SignUp() {
     navigate('/foryou');
   };
 
-  // Maneja el envío del formulario
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+  // Función para crear cuenta
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    console.log('Creando cuenta...');
-    // Aquí iría la lógica real de creación con el backend
-    // Por ahora solo redirige al formulario de inicia sesión
-    navigate('/signin');
+    if (!isFormValid) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,
+          day,
+          month,
+          year,
+          code
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Cuenta creada exitosamente:', data);
+        // Redirigir al login
+        navigate('/signin');
+      } else {
+        console.error('Error al crear cuenta:', data.error);
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+    }
   };
 
   // Determina si el formulario completo es válido
