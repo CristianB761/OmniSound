@@ -4,7 +4,7 @@ USE OmniSoundDB;
 -- ============================================
 -- TABLA 1: USUARIOS
 -- ============================================
-CREATE TABLE IF NOT EXISTS usuarios (
+CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(100) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -19,9 +19,19 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 -- ============================================
--- TABLA 2: VERIFICACIÓN DE EMAIL
+-- TABLA 2: CONTADOR DE USUARIOS
 -- ============================================
-CREATE TABLE IF NOT EXISTS email_verification (
+CREATE TABLE IF NOT EXISTS user_counter (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    last_number BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- ============================================
+-- TABLA 3: VERIFICACIÓN DE EMAIL
+-- ============================================
+CREATE TABLE IF NOT EXISTS email_verifications (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(100) NOT NULL,
     code VARCHAR(6) NOT NULL,
@@ -34,7 +44,7 @@ CREATE TABLE IF NOT EXISTS email_verification (
 );
 
 -- ============================================
--- TABLA 3: RESTABLECER CONTRASEÑA
+-- TABLA 4: RESTABLECER CONTRASEÑA
 -- ============================================
 CREATE TABLE IF NOT EXISTS password_resets (
     id INT PRIMARY KEY AUTO_INCREMENT,

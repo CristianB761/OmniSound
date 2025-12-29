@@ -59,42 +59,119 @@ function SignUp() {
     return code.length === 6;
   };
 
-  // Valida y limita el día de nacimiento (1-31)
+  // Función para determinar si un año es bisiesto
+  const isLeapYear = (year) => {
+    // Un año es bisiesto si es divisible por 4, pero no por 100 a menos que también sea divisible por 400
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  };
+
+  // Función para obtener el número máximo de días en un mes
+  const getMaxDaysInMonth = (month, year) => {
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year, 10);
+
+    if (isNaN(monthNum)) return 31; // Por defecto, si no hay mes
+
+    // Abril, junio, septiembre y noviembre tienen 30 días
+    if ([4, 6, 9, 11].includes(monthNum)) {
+      return 30;
+    }
+
+    // Febrero tiene 28 o 29 días (dependiendo si es año bisiesto)
+    if (monthNum === 2) {
+      // Si no hay año o no es un año completo, asumimos 28 días
+      if (!year || isNaN(yearNum) || year.length !== 4) {
+        return 28;
+      }
+      return isLeapYear(yearNum) ? 29 : 28;
+    }
+
+    // Los demás meses tienen 31 días
+    return 31;
+  };
+
+  // Valida y limita el día de nacimiento según el mes y año
   const handleDayChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '').slice(0, 2); // Solo números, máximo 2
+    let value = e.target.value
+      .replace(/\s/g, '') // Elimina espacios
+      .replace(/\D/g, '') // Solo números
+      .slice(0, 2); // Máximo 2
+
     if (value) {
       const dayNum = parseInt(value, 10);
-      if (dayNum < 1) value = '1';
-      if (dayNum > 31) value = '31';
+
+      // Validar que sea al menos 1
+      if (dayNum < 1) {
+        value = '1';
+      } else {
+        // Obtener el máximo de días para el mes actual
+        const maxDays = getMaxDaysInMonth(month, year);
+
+        // Si el día excede el máximo permitido, ajustar al máximo
+        if (dayNum > maxDays) {
+          value = maxDays.toString();
+        }
+      }
     }
     setDay(value);
   };
 
   // Valida y limita el mes de nacimiento (1-12)
   const handleMonthChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '').slice(0, 2);
+    let value = e.target.value
+      .replace(/\s/g, '') // Elimina espacios
+      .replace(/\D/g, '') // Solo números
+      .slice(0, 2);
+
     if (value) {
       const monthNum = parseInt(value, 10);
       if (monthNum < 1) value = '1';
       if (monthNum > 12) value = '12';
+
+      // Si se cambia el mes, verificar si el día actual es válido
+      if (day) {
+        const dayNum = parseInt(day, 10);
+        const maxDays = getMaxDaysInMonth(value, year);
+
+        // Si el día actual excede el máximo del nuevo mes, ajustarlo
+        if (dayNum > maxDays) {
+          setDay(maxDays.toString());
+        }
+      }
     }
     setMonth(value);
   };
 
   // Valida y limita el año de nacimiento (1955-2025)
   const handleYearChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '').slice(0, 4); // Solo números, máximo 4
+    let value = e.target.value
+      .replace(/\s/g, '') // Elimina espacios
+      .replace(/\D/g, '') // Solo números
+      .slice(0, 4); // Máximo 4
+
     if (value.length === 4) {
       const yearNum = parseInt(value, 10);
       if (yearNum < 1955) value = '1955';
       if (yearNum > 2025) value = '2025';
+
+      // Si se cambia el año y es febrero, verificar si el día es válido
+      if (month && day && parseInt(month, 10) === 2) {
+        const dayNum = parseInt(day, 10);
+        const maxDays = getMaxDaysInMonth(month, value);
+
+        // Si el día actual excede el máximo del nuevo año, ajustarlo
+        if (dayNum > maxDays) {
+          setDay(maxDays.toString());
+        }
+      }
     }
     setYear(value);
   };
 
   // Función para manejar cambios en el email
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+    const value = e.target.value.replace(/\s/g, ''); // Elimina espacios
+    setEmail(value);
     // Si se modifica el email, vuelve al estado de "Enviar código"
     if (isCodeSent) {
       setIsCodeSent(false);
@@ -103,12 +180,20 @@ function SignUp() {
 
   // Función para manejar cambios en el código
   const handleCodeChange = (e) => {
-    const newCode = e.target.value.replace(/\D/g, '').slice(0, 6); // Solo números, máximo 6
-    setCode(newCode);
+    const value = e.target.value
+      .replace(/\s/g, '') // Elimina espacios
+      .replace(/\D/g, '') // Solo números
+      .slice(0, 6); // Máximo 6
+    setCode(value);
     // Si se modifica el código, vuelve al estado de "Validar código"
     if (isCodeValid !== null) {
       setIsCodeValid(null);
     }
+  };
+
+  // Función para manejar cambios en la contraseña
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
   };
 
   // Función para enviar código de verificación
@@ -177,9 +262,11 @@ function SignUp() {
     if (!isFormValid) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
         body: JSON.stringify({
           email,
           password,
@@ -194,7 +281,7 @@ function SignUp() {
 
       if (response.ok) {
         console.log('Cuenta creada exitosamente:', data);
-        // Redirigir al login
+        // Redirigir a Inicia sesión
         navigate('/signin');
       } else {
         console.error('Error al crear cuenta:', data.error);
@@ -341,7 +428,7 @@ function SignUp() {
               type={showPassword ? "text" : "password"}
               className="signup-input"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="Ingrese su contraseña"
             />
 

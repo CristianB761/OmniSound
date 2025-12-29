@@ -18,10 +18,10 @@ const authController = {
         return res.status(400).json({ error: 'El formato del email no es válido' });
       }
 
-      // Verificar si el email ya está registrado
+      // Verificar si el email ya existe
       const existingUser = await User.findByEmail(email);
       if (existingUser.length > 0) {
-        return res.status(400).json({ error: 'El email ya está registrado' });
+        return res.status(400).json({ error: 'El email ya está en uso' });
       }
 
       // Generar código de 6 dígitos
@@ -38,7 +38,7 @@ const authController = {
         message: 'Código de verificación enviado' 
       });
     } catch (error) {
-      console.error('Error en sendCode:', error);
+      console.error('Error al enviar código:', error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   },
@@ -69,12 +69,12 @@ const authController = {
     }
   },
 
-  // 3. REGISTRAR USUARIO
-  register: async (req, res) => {
+  // 3. CREAR CUENTA (SIGNUP)
+  signup: async (req, res) => {
     try {
       const { email, password, day, month, year, code } = req.body;
 
-      // Validar campos requeridos
+      // Validar inputs requeridos
       if (!email || !password || !day || !month || !year || !code) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
       }
@@ -95,7 +95,7 @@ const authController = {
         return res.status(400).json({ error: 'El código debe tener 6 dígitos' });
       }
 
-      // Verificar el código antes de registrar
+      // Verificar el código antes de crear la cuenta
       const verification = await User.verifyCode(email, code);
       if (verification.length === 0) {
         return res.status(400).json({ error: 'Código de verificación no válido o expirado' });
@@ -104,18 +104,7 @@ const authController = {
       // Verificar si el email ya existe
       const existingUser = await User.findByEmail(email);
       if (existingUser.length > 0) {
-        return res.status(400).json({ error: 'El email ya está registrado' });
-      }
-
-      // Generar username automático (email sin dominio)
-      const username = email.split('@')[0];
-
-      // Verificar si el username ya existe
-      const existingUsername = await User.findByUsername(username);
-      if (existingUsername.length > 0) {
-        // Si el username existe, agregar números aleatorios
-        const randomNum = Math.floor(Math.random() * 1000);
-        username = `${username}${randomNum}`;
+        return res.status(400).json({ error: 'El email ya está en uso' });
       }
 
       // Encriptar contraseña
@@ -125,20 +114,19 @@ const authController = {
       // Formatear fecha de nacimiento
       const birth_date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 
-      // Crear usuario
+      // Crear cuenta
       const result = await User.create({
         email,
-        username,
         password_hash,
         birth_date
       });
 
       console.log(`\n===================================`);
-      console.log(`USUARIO REGISTRADO`);
+      console.log(`CUENTA CREADA`);
       console.log(`ID: ${result.insertId}`);
       console.log(`Email: ${email}`);
-      console.log(`Username: ${username}`);
-      console.log(`Fecha de nacimiento: ${birth_date}`);
+      console.log(`Username: ${result.username}`);
+      console.log(`Fecha de nacimiento:${birth_date}`);
       console.log(`===================================\n`);
 
       // Generar token JWT
@@ -146,7 +134,7 @@ const authController = {
         { 
           id: result.insertId, 
           email: email,
-          username: username 
+          username: result.username 
         },
         process.env.JWT_SECRET || 'omnisound_dev_secret_key_2024',
         { expiresIn: '7d' }
@@ -157,18 +145,18 @@ const authController = {
 
       res.status(201).json({
         success: true,
-        message: 'Usuario registrado exitosamente',
+        message: 'Cuenta creada exitosamente',
         token: token,
         user: {
           id: result.insertId,
           email: email,
-          username: username,
+          username: result.username,
           birth_date: birth_date
         }
       });
 
     } catch (error) {
-      console.error('Error en registro:', error);
+      console.error('Error al crear cuenta:', error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   }
