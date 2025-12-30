@@ -43,8 +43,19 @@ function SignIn() {
     setShowPassword(!showPassword);
   };
 
+  // Función para manejar cambios en el email
+  const handleEmailChange = (e) => {
+    const value = e.target.value.replace(/\s/g, ''); // Elimina espacios
+    setEmail(value);
+  };
+
+  // Función para manejar cambios en la contraseña
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
   // Maneja el envío del formulario
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
 
     // Valida que el formulario sea válido antes de enviar
@@ -52,10 +63,33 @@ function SignIn() {
       return;
     }
 
-    console.log('Iniciando sesión...');
-    // Aquí iría la lógica real de autenticación con el backend
-    // Por ahora solo redirige a la página principal
-    navigate('/foryou');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Sesión iniciada:', data);
+
+        // Guardar el token y los datos del usuario en localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        // Redirigir a Para ti
+        navigate('/foryou');
+      } else {
+        console.error('Error al iniciar sesión:', data.error);
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+    }
   };
 
   // Valida el formato del email usando una expresión regular
@@ -100,7 +134,7 @@ function SignIn() {
               type="text"
               className="signin-input"
               value={email}
-              onChange={(e) => setEmail(e.target.value)} // Actualiza el estado con cada tecla
+              onChange={handleEmailChange}
               placeholder="Ingrese su correo electrónico"
             />
           </div>
@@ -114,7 +148,7 @@ function SignIn() {
               type={showPassword ? "text" : "password"} // Cambia el tipo según la visibilidad
               className="signin-input"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="Ingrese su contraseña"
             />
 

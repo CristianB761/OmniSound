@@ -11,4 +11,7 @@ router.post('/verify-code', authController.verifyCode);
 // Ruta para crear cuenta
 router.post('/signup', authController.signup);
 
+// Ruta para iniciar sesión
+router.post('/signin', authController.signin);
+
 module.exports = router;

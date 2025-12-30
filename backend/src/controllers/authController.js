@@ -30,7 +30,7 @@ const authController = {
       // Guardar en base de datos (expira en 10 minutos)
       await User.saveVerificationCode(email, code);
 
-      // Mostramos el código en consola
+      // Mostrar en consola
       console.log(`\nCódigo de verificación para ${email}: ${code}`);
 
       res.json({ 
@@ -76,7 +76,7 @@ const authController = {
 
       // Validar inputs requeridos
       if (!email || !password || !day || !month || !year || !code) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        return res.status(400).json({ error: 'Todos los inputs son obligatorios' });
       }
 
       // Validar formato de email
@@ -127,7 +127,7 @@ const authController = {
       console.log(`Email: ${email}`);
       console.log(`Username: ${result.username}`);
       console.log(`Fecha de nacimiento:${birth_date}`);
-      console.log(`===================================\n`);
+      console.log(`===================================`);
 
       // Generar token JWT
       const token = jwt.sign(
@@ -145,7 +145,7 @@ const authController = {
 
       res.status(201).json({
         success: true,
-        message: 'Cuenta creada exitosamente',
+        message: 'Cuenta creada',
         token: token,
         user: {
           id: result.insertId,
@@ -157,6 +157,72 @@ const authController = {
 
     } catch (error) {
       console.error('Error al crear cuenta:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  // 4. INICIAR SESIÓN (SIGNIN)
+  signin: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      // Validar inputs requeridos
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email y contraseña son requeridos' });
+      }
+
+      // Validar formato de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'El formato del email no es válido' });
+      }
+
+      // Buscar usuario por email
+      const users = await User.findByEmail(email);
+      if (users.length === 0) {
+        return res.status(401).json({ error: 'Credenciales incorrectas' });
+      }
+
+      const user = users[0];
+
+      // Verificar contraseña
+      const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: 'Credenciales incorrectas' });
+      }
+
+      // Generar token JWT
+      const token = jwt.sign(
+        { 
+          id: user.id, 
+          email: user.email,
+          username: user.username 
+        },
+        process.env.JWT_SECRET || 'omnisound_dev_secret_key_2024',
+        { expiresIn: '7d' }
+      );
+
+      console.log(`\n===================================`);
+      console.log(`SESIÓN INICIADA`);
+      console.log(`ID: ${user.id}`);
+      console.log(`Email: ${user.email}`);
+      console.log(`Username: ${user.username}`);
+      console.log(`===================================`);
+
+      res.json({
+        success: true,
+        message: 'Sesión iniciada',
+        token: token,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          birth_date: user.birth_date,
+        }
+      });
+
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   }
