@@ -225,6 +225,125 @@ const authController = {
       console.error('Error al iniciar sesión:', error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
+  },
+
+  // 5. ENVIAR CÓDIGO PARA RESTABLECER CONTRASEÑA
+  sendPasswordResetCode: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ error: 'El email es requerido' });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'El formato del email no es válido' });
+      }
+
+      // Verificar si el email existe en el sistema
+      const existingUser = await User.findByEmail(email);
+      if (existingUser.length === 0) {
+        return res.status(404).json({ error: 'Email no encontrado' });
+      }
+
+      // Generar código de 6 dígitos
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // Guardar en la tabla password_resets (expira en 1 hora)
+      await User.savePasswordResetToken(email, code);
+
+      // Mostrar en consola
+      console.log(`\nCódigo de restablecimiento para ${email}: ${code}`);
+
+      res.json({
+        success: true,
+        message: 'Código de restablecimiento enviado'
+      });
+
+    } catch (error) {
+      console.error('Error al enviar código de restablecimiento:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  // 6. VERIFICAR CÓDIGO DE RESTABLECIMIENTO
+  verifyPasswordResetCode: async (req, res) => {
+    try {
+      const { email, code } = req.body;
+
+      if (!email || !code) {
+        return res.status(400).json({ error: 'Email y código son requeridos' });
+      }
+
+      // Verificar el código
+      const verification = await User.verifyPasswordResetToken(email, code);
+
+      if (verification.length === 0) {
+        return res.status(400).json({ error: 'Código no válido o expirado' });
+      }
+
+      res.json({
+        success: true,
+        message: 'Código verificado correctamente'
+      });
+
+    } catch (error) {
+      console.error('Error al verificar código de restablecimiento:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  // 7. RESTABLECER CONTRASEÑA (PASSWORDRESET)
+  resetPassword: async (req, res) => {
+    try {
+      const { email, code, newPassword } = req.body;
+
+      if (!email || !code || !newPassword) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+      }
+
+      // Validar formato de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'El formato del email no es válido' });
+      }
+
+      // Validar longitud de contraseña
+      if (newPassword.length < 8) {
+        return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
+      }
+
+      // Verificar el código antes de restablecer
+      const verification = await User.verifyPasswordResetToken(email, code);
+      if (verification.length === 0) {
+        return res.status(400).json({ error: 'Código de restablecimiento no válido o expirado' });
+      }
+
+      // Encriptar nueva contraseña
+      const salt = await bcrypt.genSalt(10);
+      const password_hash = await bcrypt.hash(newPassword, salt);
+
+      // Actualizar contraseña en la base de datos
+      await User.updatePassword(email, password_hash);
+
+      // Eliminar el token después de usarlo
+      await User.deletePasswordResetToken(email);
+
+      console.log(`\n===================================`);
+      console.log(`CONTRASEÑA RESTABLECIDA`);
+      console.log(`Email: ${email}`);
+      console.log(`===================================`);
+
+      res.json({
+        success: true,
+        message: 'Contraseña restablecida'
+      });
+
+    } catch (error) {
+      console.error('Error al restablecer contraseña:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
   }
 };
 

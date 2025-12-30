@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './ForgotPassword.css';
+import './PasswordReset.css';
 
 // Importar iconos como componentes React
 import { ReactComponent as CloseIcon } from '../icons/CloseIcon.svg';
@@ -13,7 +13,7 @@ import { ReactComponent as InvalidIcon } from '../icons/InvalidIcon.svg';
 import { ReactComponent as ShowPasswordIcon } from '../icons/ShowPasswordIcon.svg';
 import { ReactComponent as HidePasswordIcon } from '../icons/HidePasswordIcon.svg';
 
-function ForgotPassword() {
+function PasswordReset() {
   const [email, setEmail] = useState(''); // Almacena el email ingresado
   const [code, setCode] = useState(''); // Almacena el código de verificación ingresado
   const [newPassword, setNewPassword] = useState(''); // Almacena la nueva contraseña ingresada
@@ -57,18 +57,33 @@ function ForgotPassword() {
     return password.length >= 8;
   };
 
-  // Simula el envío del código de verificación por email
-  const handleSendCode = () => {
+  // Función para enviar código de verificación
+  const handleSendCode = async () => {
     if (email && isValidEmail(email) && !isCodeSent) {
-      setIsCodeSent(true);
-      console.log('Código enviado a:', email);
-      // Aquí iría la lógica real de verificación con el backend
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/send-password-reset-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        if (response.ok) {
+          setIsCodeSent(true);
+          console.log('Código de restablecimiento enviado.');
+        } else {
+          const data = await response.json();
+          console.error('Error al enviar código:', data.error);
+        }
+      } catch (error) {
+        console.error('Error de red:', error);
+      }
     }
   };
 
   // Función para manejar cambios en el email
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+    const value = e.target.value.replace(/\s/g, ''); // Elimina espacios
+    setEmail(value);
     // Si se modifica el email, vuelve al estado de "Enviar código"
     if (isCodeSent) {
       setIsCodeSent(false);
@@ -77,24 +92,44 @@ function ForgotPassword() {
 
   // Función para manejar cambios en el código
   const handleCodeChange = (e) => {
-    const newCode = e.target.value.replace(/\D/g, '').slice(0, 6); // Solo números, máximo 6
-    setCode(newCode);
+    const value = e.target.value
+      .replace(/\s/g, '') // Elimina espacios
+      .replace(/\D/g, '') // Solo números
+      .slice(0, 6); // Máximo 6 dígitos
+    setCode(value);
     // Si se modifica el código, vuelve al estado de "Validar código"
     if (isCodeValid !== null) {
       setIsCodeValid(null);
     }
   };
 
-  // Simula la validación del código de verificación
-  const handleVerifyCode = () => {
+  // Función para manejar cambios en la nueva contraseña
+  const handleNewPasswordChange = (e) => {
+    setNewPassword(e.target.value);
+  };
+
+  // Función para validar código de verificación
+  const handleVerifyCode = async () => {
     if (isValidCode(code)) {
-      // Simulación: Código válido es "123456"
-      if (code === '123456') { // Código de prueba
-        setIsCodeValid(true);
-        console.log('Código válido');
-      } else {
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/verify-password-reset-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setIsCodeValid(true);
+          console.log('Código válido');
+        } else {
+          setIsCodeValid(false);
+          console.log('Código no válido:', data.error);
+        }
+      } catch (error) {
+        console.error('Error de red:', error);
         setIsCodeValid(false);
-        console.log('Código no válido');
       }
     }
   };
@@ -114,14 +149,35 @@ function ForgotPassword() {
     navigate('/foryou');
   };
 
-  // Maneja el envío del formulario
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+  // Función para restablecer contraseña
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    console.log('Contraseña restablecida');
-    // Aquí iría la lógica real de restablecimiento con el backend
-    // Por ahora solo redirige al formulario de inicia sesión
-    navigate('/signin');
+    if (!isFormValid) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          code,
+          newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Contraseña restablecida');
+        // Redirigir a Inicia sesión
+        navigate('/signin');
+      } else {
+        console.error('Error al restablecer contraseña:', data.error);
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+    }
   };
 
   // Determina si el formulario completo es válido
@@ -131,12 +187,12 @@ function ForgotPassword() {
                       isCodeValid === true; // Código debe estar validado como verdadero
 
   return (
-    <div className="forgotpassword-page">
-      <div className="forgotpassword-container">
+    <div className="passwordreset-page">
+      <div className="passwordreset-container">
 
         {/* Botón Volver a signin con ícono */}
         <button 
-          className="forgot-back-button"
+          className="passwordreset-back-button"
           onClick={handleBack}
           type="button"
           data-tooltip="Volver"
@@ -146,7 +202,7 @@ function ForgotPassword() {
 
         {/* Botón Cerrar formulario con ícono */}
         <button 
-          className="forgot-close-button"
+          className="passwordreset-close-button"
           onClick={handleClose}
           type="button"
           data-tooltip="Cerrar"
@@ -155,18 +211,18 @@ function ForgotPassword() {
         </button>
 
         {/* Título del formulario */}
-        <h1 className="forgotpassword-title">Restablecer contraseña</h1>
+        <h1 className="passwordreset-title">Restablecer contraseña</h1>
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="forgotpassword-form" noValidate>
+        <form onSubmit={handleSubmit} className="passwordreset-form" noValidate>
 
           {/* Grupo de input para el email */}
-          <div className="forgot-input-group">
-            <span className="forgot-input-label">
+          <div className="passwordreset-input-group">
+            <span className="passwordreset-input-label">
               Correo electrónico:
             </span>
             <input
               type="text"
-              className="forgot-input"
+              className="passwordreset-input"
               value={email}
               onChange={handleEmailChange}
               placeholder="Ingrese su correo electrónico"
@@ -175,7 +231,7 @@ function ForgotPassword() {
             {/* Botón Enviar código - Cambia de ícono según el estado */}
             <button
               type="button"
-              className="forgot-send-button"
+              className="passwordreset-send-button"
               onClick={handleSendCode}
               disabled={!email || !isValidEmail(email) || isCodeSent}
               data-tooltip={isCodeSent ? "Código enviado" : "Enviar código"}
@@ -185,13 +241,13 @@ function ForgotPassword() {
           </div>
 
           {/* Grupo de input para el código de verificación */}
-          <div className="forgot-input-group">
-            <span className="forgot-input-label">
+          <div className="passwordreset-input-group">
+            <span className="passwordreset-input-label">
               Código de verificación:
             </span>
             <input
               type="text"
-              className={`forgot-input ${isCodeValid === false ? 'invalid-code' : ''}`}
+              className={`passwordreset-input ${isCodeValid === false ? 'invalid-code' : ''}`}
               value={code}
               onChange={handleCodeChange}
               placeholder="Ingrese los 6 dígitos"
@@ -201,7 +257,7 @@ function ForgotPassword() {
             {/* Botón de Validación - Cambia de ícono según el resultado */}
             <button
               type="button"
-              className="forgot-verify-button"
+              className="passwordreset-verify-button"
               onClick={handleVerifyCode}
               disabled={!isValidCode(code) || isCodeValid !== null}
               data-tooltip={
@@ -214,22 +270,22 @@ function ForgotPassword() {
           </div>
 
           {/* Grupo de input para la contraseña */}
-          <div className="forgot-input-group">
-            <span className="forgot-input-label">
+          <div className="passwordreset-input-group">
+            <span className="passwordreset-input-label">
               Nueva contraseña:
             </span>
             <input
-              type={showPassword ? "text" : "password"}
-              className="forgot-input"
+              type={showPassword ? "text" : "password"} // Cambia el tipo según la visibilidad
+              className="passwordreset-input"
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={handleNewPasswordChange}
               placeholder="Ingrese su nueva contraseña"
             />
 
             {/* Botón de visibilidad */}
             <button
-              type="button"
-              className="forgot-visibility-button"
+              type="button" // Para que no envíe el formulario
+              className="passwordreset-visibility-button"
               onClick={togglePasswordVisibility}
               disabled={false}
               data-tooltip={showPassword ? "Ocultar" : "Mostrar"}
@@ -241,17 +297,17 @@ function ForgotPassword() {
           {/* Botón Restablecer constraseña - Se habilita solo cuando es válido */}
           <button
             type="submit"
-            className={`forgot-submit-button ${isFormValid ? 'enabled' : 'disabled'}`}
-            disabled={!isFormValid}
+            className={`passwordreset-submit-button ${isFormValid ? 'enabled' : 'disabled'}`}
+            disabled={!isFormValid} // Deshabilitado cuando el formulario no es válido
           >
             Restablecer contraseña
           </button>
         </form>
 
         {/* Pie de página */}
-        <div className="forgot-footer">
+        <div className="passwordreset-footer">
           <span>¿No tienes una cuenta?</span>
-          {/* Link Crea tu cuenta */}
+          {/* Link de Crea tu cuenta */}
           <Link 
             to="/signup" 
             className="signup-link"
@@ -264,4 +320,4 @@ function ForgotPassword() {
   );
 }
 
-export default ForgotPassword;
+export default PasswordReset;

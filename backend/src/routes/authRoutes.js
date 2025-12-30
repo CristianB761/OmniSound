@@ -14,4 +14,13 @@ router.post('/signup', authController.signup);
 // Ruta para iniciar sesión
 router.post('/signin', authController.signin);
 
+// Ruta para enviar código de restablecimiento
+router.post('/send-password-reset-code', authController.sendPasswordResetCode);
+
+// Ruta para verificar código de restablecimiento
+router.post('/verify-password-reset-code', authController.verifyPasswordResetCode);
+
+// Ruta para restablecer contraseña
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;

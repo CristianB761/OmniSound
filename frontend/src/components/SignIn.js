@@ -166,8 +166,8 @@ function SignIn() {
 
           {/* Link de Recuperar contraseña */}
           <Link 
-            to="/forgotpassword" 
-            className="forgotpassword-link"
+            to="/passwordreset" 
+            className="passwordreset-link"
           >
             ¿Olvidaste la contraseña?
           </Link>

@@ -20,7 +20,7 @@ body {
   margin-left: 280px; /* Espacio para el sidebar fijo */
 }
 
-/* Contenedor para páginas de signin, forgotpassword y signup */
+/* Contenedor para páginas de signin, passwordreset y signup */
 .auth-layout {
   min-height: 100vh; /* Ocupa toda la altura de la ventana */
   display: flex;

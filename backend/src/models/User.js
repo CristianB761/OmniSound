@@ -99,7 +99,44 @@ const User = {
   deleteVerificationCode: async (email) => {
     const [result] = await promisePool.query('DELETE FROM email_verifications WHERE email = ?', [email]);
     return result;
-  }
+  },
+
+  // Guardar token de restablecimiento
+  savePasswordResetToken: async (email, token) => {
+    // Eliminar tokens anteriores para este email
+    await promisePool.query('DELETE FROM password_resets WHERE email = ?', [email]);
+    
+    // Insertar nuevo token
+    const [result] = await promisePool.query(
+      'INSERT INTO password_resets (email, token) VALUES (?, ?)',
+      [email, token]
+    );
+    return result;
+  },
+
+  // Verificar token de restablecimiento
+  verifyPasswordResetToken: async (email, token) => {
+    const [rows] = await promisePool.query(
+      'SELECT * FROM password_resets WHERE email = ? AND token = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)',
+      [email, token]
+    );
+    return rows;
+  },
+
+  // Actualizar contraseña
+  updatePassword: async (email, password_hash) => {
+    const [result] = await promisePool.query(
+      'UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE email = ?',
+      [password_hash, email]
+    );
+    return result;
+  },
+
+  // Eliminar token después de usar
+  deletePasswordResetToken: async (email) => {
+    const [result] = await promisePool.query('DELETE FROM password_resets WHERE email = ?', [email]);
+    return result;
+  },
 };
 
 module.exports = User;

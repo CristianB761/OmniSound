@@ -4,7 +4,7 @@ import SideBar from './components/SideBar';
 import ForYou from './components/ForYou';
 import MusicPlayer from './components/MusicPlayer';
 import SignIn from './components/SignIn';
-import ForgotPassword from './components/ForgotPassword';
+import PasswordReset from './components/PasswordReset';
 import SignUp from './components/SignUp';
 import Explore from './components/Explore';
 import Following from './components/Following';
@@ -105,9 +105,9 @@ function App() {
           } />
 
           {/* Ruta para Forgot Password */}
-          <Route path="/forgotpassword" element={
+          <Route path="/passwordreset" element={
             <AuthLayout>
-              <ForgotPassword />
+              <PasswordReset />
             </AuthLayout>
           } />
 
