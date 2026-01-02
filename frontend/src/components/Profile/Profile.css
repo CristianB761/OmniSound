@@ -23,16 +23,16 @@
   align-items: flex-start;
 }
 
-/* Imagen circular del perfil */
-.profile-image-circle {
+/* Foto circular del perfil */
+.profile-picture-circle {
   width: 160px;
   height: 160px;
-  background-color: #1e1e1e; /* Color temporal hasta que cargue la imagen */
+  background-color: #1e1e1e; /* Color temporal hasta que cargue la foto */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   border-radius: 50%;
-  flex-shrink: 0; /* Evita que la imagen se reduzca */
+  flex-shrink: 0; /* Evita que la foto se reduzca */
 }
 
 /* Información del perfil */

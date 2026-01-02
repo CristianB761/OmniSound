@@ -137,6 +137,12 @@ const User = {
     const [result] = await promisePool.query('DELETE FROM password_resets WHERE email = ?', [email]);
     return result;
   },
+
+  // Buscar usuario por ID
+  findById: async (id) => {
+    const [rows] = await promisePool.query('SELECT * FROM users WHERE id = ?', [id]);
+    return rows;
+  }
 };
 
 module.exports = User;

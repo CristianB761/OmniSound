@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const authRoutes = require('./src/routes/authRoutes');
 const { promisePool } = require('./src/config/database');
+const profileRoutes = require('./src/routes/profileRoutes');
 
 const app = express();
 
@@ -18,6 +19,9 @@ app.use(express.json());
 
 // Usar rutas de autenticación
 app.use('/api/auth', authRoutes);
+
+// Usar rutas de perfil
+app.use('/api/profile', profileRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

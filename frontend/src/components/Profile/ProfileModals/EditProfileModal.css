@@ -63,36 +63,36 @@
 }
 
 /* ===== SECCIÓN DE IMAGEN DE PERFIL ===== */
-.edit-profile-image-section,
-.edit-profile-image-container {
+.edit-profile-picture-section,
+.edit-profile-picture-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.edit-profile-image-section {
+.edit-profile-picture-section {
   margin-bottom: 24px;
 }
 
-.edit-profile-image-container {
-  gap: 16px; /* Espacio entre la imagen y el botón */
+.edit-profile-picture-container {
+  gap: 16px; /* Espacio entre la foto y el botón */
 }
 
 .edit-profile-file-input {
   display: none; /* Input de archivo oculto */
 }
 
-.edit-profile-image-circle {
+.edit-profile-picture-circle {
   width: 200px;
   height: 200px;
-  border-radius: 50%; /* Hace la imagen circular */
+  border-radius: 50%; /* Hace la foto circular */
   background-color: #1e1e1e; /* Color de fondo por defecto */
-  background-size: cover; /* Ajusta la imagen al círculo */
-  background-position: center; /* Centra la imagen */
+  background-size: cover; /* Ajusta la foto al círculo */
+  background-position: center; /* Centra la foto */
 }
 
 /* ===== ESTILOS COMPARTIDOS PARA BOTONES ===== */
-.edit-profile-image-button,
+.edit-profile-picture-button,
 .edit-profile-cancel-button,
 .edit-profile-save-button {
   padding: 8px 12px;
@@ -104,14 +104,14 @@
   transition: all 0.3s ease; /* Transición suave para hover y cambios */
 }
 
-/* Botón específico para subir imagen */
-.edit-profile-image-button {
+/* Botón específico para subir foto */
+.edit-profile-picture-button {
   background-color: #2c2c2c;
   color: lightgray;
   min-width: auto; /* Ancho según contenido, no el mínimo compartido */
 }
 
-.edit-profile-image-button:hover {
+.edit-profile-picture-button:hover {
   background-color: #464646;
   color: ghostwhite;
 }

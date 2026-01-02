@@ -10,8 +10,8 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
   const [realName, setRealName] = useState(currentUser?.realName || ''); // Nombre real del usuario
   const [bio, setBio] = useState(currentUser?.bio || ''); // Biografía del usuario
 
-  const [profileImage, setProfileImage] = useState(null); // Imagen de perfil seleccionada
-  const [imagePreview, setImagePreview] = useState(null); // Vista previa de la imagen
+  const [profilePicture, setProfilePicture] = useState(null); // Foto de perfil seleccionada
+  const [picturePreview, setPicturePreview] = useState(null); // Vista previa de la foto
 
   const [originalProfileUrl, setOriginalProfileUrl] = useState(currentUser?.profileUrl || 'artista'); // URL original para detectar cambios
   const [showUrlWarning, setShowUrlWarning] = useState(false); // Controla la visibilidad de la advertencia de URL
@@ -43,8 +43,8 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
       setRealName(currentUser?.realName || '');
       setBio(currentUser?.bio || '');
       setOriginalProfileUrl(currentUser?.profileUrl || 'artista');
-      setProfileImage(null);
-      setImagePreview(null);
+      setProfilePicture(null);
+      setPicturePreview(null);
     }
   }, [isOpen, currentUser]);
 
@@ -72,24 +72,24 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
   // Determina si el formulario completo es válido
   const isFormValid = isValidUsername(displayName) && isValidProfileUrl(profileUrl);
 
-  // Maneja la subida de la imagen de perfil
-  const handleImageUpload = async (e) => {
+  // Maneja la subida de la foto de perfil
+  const handlePictureUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Verifica que sea una imagen
-    if (!file.type.startsWith('image/')) return;
+    // Verifica que sea una foto
+    if (!file.type.startsWith('picture/')) return;
 
-    setProfileImage(file);
+    setProfilePicture(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result);
+      setPicturePreview(reader.result);
     };
     reader.readAsDataURL(file);
   };
 
-  // Simula clic en el input de archivo oculto cuando se presiona el botón de imagen
-  const handleImageButtonClick = () => {
+  // Simula clic en el input de archivo oculto cuando se presiona el botón de foto
+  const handlePictureButtonClick = () => {
     fileInputRef.current.click();
   };
 
@@ -108,7 +108,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
       profileUrl,
       realName,
       bio,
-      profileImage
+      profilePicture
     };
     onSave(userData);
     onClose();
@@ -135,26 +135,26 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           <h2 className="edit-profile-title">Editar perfil</h2>
         </div>
 
-        {/* Sección de imagen del perfil */}
-        <div className="edit-profile-image-section">
+        {/* Sección de foto del perfil */}
+        <div className="edit-profile-picture-section">
           <input
             type="file"
             ref={fileInputRef}
-            onChange={handleImageUpload}
-            accept="image/*" // Acepta cualquier tipo de imagen
+            onChange={handlePictureUpload}
+            accept="picture/*" // Acepta cualquier tipo de foto
             className="edit-profile-file-input"
           />
-          <div className="edit-profile-image-container">
-            {/* Imagen del perfil */}
+          <div className="edit-profile-picture-container">
+            {/* Foto de perfil */}
             <div 
-              className="edit-profile-image-circle"
-              style={imagePreview ? { backgroundImage: `url(${imagePreview})` } : {}}
+              className="edit-profile-picture-circle"
+              style={picturePreview ? { backgroundPicture: `url(${picturePreview})` } : {}}
             ></div>
             <button 
-              className="edit-profile-image-button"
-              onClick={handleImageButtonClick}
+              className="edit-profile-picture-button"
+              onClick={handlePictureButtonClick}
             >
-              {profileImage || imagePreview ? 'Sustituir imagen' : 'Subir imagen'}
+              {profilePicture || picturePreview ? 'Sustituir foto' : 'Subir foto'}
             </button>
           </div>
         </div>

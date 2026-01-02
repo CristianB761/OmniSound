@@ -88,6 +88,13 @@ function App() {
             </MainLayout>
           } />
 
+          {/* Ruta dinámica para Perfil */}
+          <Route path="/:username" element={
+            <MainLayout>
+              <Profile />
+            </MainLayout>
+          } />
+
           {/* ===== UPLOADLAYOUT ===== */}
           {/* Ruta para Subir */}
           <Route path="/upload" element={
@@ -104,7 +111,7 @@ function App() {
             </AuthLayout>
           } />
 
-          {/* Ruta para Forgot Password */}
+          {/* Ruta para Password Reset */}
           <Route path="/passwordreset" element={
             <AuthLayout>
               <PasswordReset />
