@@ -16,10 +16,14 @@ import { ReactComponent as SignOutIconIcon } from '../icons/SignOutIcon.svg';
 function SideBar() {
   const searchInputRef = useRef(null); // Referencia para acceder al input de búsqueda directamente
   const location = useLocation(); // Hook para obtener la ruta actual
-  const navigate = useNavigate(); // Hook para navegar entre páginas
   const [searchValue, setSearchValue] = useState(''); // Controla el texto del input
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación del usuario
+  const [userData, setUserData] = useState(null); // Datos del usuario autenticado
+  const [loading, setLoading] = useState(true); // Estado de carga para verificar autenticación
 
-  // Efecto para manejar el shortcut de teclado
+  const navigate = useNavigate(); // Hook para navegar entre páginas
+
+  // Efecto para manejar el shortcut de teclado y verificar autenticación
   useEffect(() => {
     const handleKeyPress = (event) => {
       // Si se presiona 'S' (mayúscula o minúscula) y no están en un campo de texto,
@@ -34,20 +38,60 @@ function SideBar() {
     };
     // Agrega el event listener cuando el componente se monta
     document.addEventListener('keydown', handleKeyPress);
+
+    // Verificar autenticación al cargar el componente
+    checkAuthentication();
+
     // Limpia el event listener cuando el componente se desmonta
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
   }, []); // Array vacío significa que solo se ejecuta una vez
 
+  // Función para verificar autenticación con el backend
+  const checkAuthentication = async () => {
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+
+    if (token && storedUser) {
+      try {
+        // Intentar obtener el perfil del usuario autenticado desde el backend
+        const response = await fetch('http://localhost:5000/api/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsAuthenticated(true);
+          setUserData(data.profile); // Actualizar con los datos del perfil desde el backend
+        } else {
+          // Si el token no es válido, limpiar el localStorage
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setIsAuthenticated(false);
+          setUserData(null);
+        }
+      } catch (error) {
+        console.error('Error al verificar autenticación:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        setUserData(null);
+      }
+    } else {
+      setIsAuthenticated(false);
+      setUserData(null);
+    }
+    setLoading(false);
+  };
+
   // Verifica si la ruta actual coincide con el path proporcionado
   const isActive = (path) => {
     return location.pathname === path;
-  };
-
-  // Función para botones que aún no tienen funcionalidad completa
-  const handleButtonClick = (buttonName) => {
-    console.log(`Clic en ${buttonName}`);
   };
 
   // Función para navegar a una ruta específica usando React Router
@@ -67,6 +111,33 @@ function SideBar() {
       searchInputRef.current.focus(); // Mantiene el foco en el input después de limpiar
     }
   };
+
+  // Función para cerrar sesión
+  const handleSignOut = () => {
+    // Eliminar datos de autenticación del localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    // Actualizar estado de autenticación
+    setIsAuthenticated(false);
+    setUserData(null);
+
+    // Redirigir a la página principal
+    navigate('/foryou');
+
+    // Recargar la página para actualizar el estado de la aplicación
+    window.location.reload();
+  };
+
+  // Si está cargando, no mostrar el sidebar o mostrar un estado de carga
+  if (loading) {
+    return (
+      <div className="sidebar">
+        <h1 className="sidebar-title">OmniSound</h1>
+        <div>Cargando...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="sidebar">
@@ -118,23 +189,27 @@ function SideBar() {
             <span>Explorar</span>
           </button>
 
-          {/* Botón Siguiendo con ícono */}
-          <button 
-            className={`sidebar-following-button ${isActive('/following') ? 'active' : ''}`}
-            onClick={() => handleNavigation('/following')}
-          >
-            <FollowingIcon className="sidebar-following-icon" />
-            <span>Siguiendo</span>
-          </button>
+          {/* Botón Siguiendo con ícono - Solo se muestra si el usuario está autenticado */}
+          {isAuthenticated && (
+            <button 
+              className={`sidebar-following-button ${isActive('/following') ? 'active' : ''}`}
+              onClick={() => handleNavigation('/following')}
+            >
+              <FollowingIcon className="sidebar-following-icon" />
+              <span>Siguiendo</span>
+            </button>
+          )}
 
-          {/* Botón Notificaciones con ícono */}
-          <button 
-            className={`sidebar-notifications-button ${isActive('/notifications') ? 'active' : ''}`}
-            onClick={() => handleNavigation('/notifications')}
-          >
-            <NotificationsIcon className="sidebar-notifications-icon" />
-            <span>Notificaciones</span>
-          </button>
+          {/* Botón Notificaciones con ícono - Solo se muestra si el usuario está autenticado */}
+          {isAuthenticated && (
+            <button 
+              className={`sidebar-notifications-button ${isActive('/notifications') ? 'active' : ''}`}
+              onClick={() => handleNavigation('/notifications')}
+            >
+              <NotificationsIcon className="sidebar-notifications-icon" />
+              <span>Notificaciones</span>
+            </button>
+          )}
 
           {/* Botón Subir con ícono */}
           <button 
@@ -147,45 +222,57 @@ function SideBar() {
 
           {/* Botón Perfil con ícono */}
           <button 
-            className={`sidebar-profile-button ${isActive('/profile') ? 'active' : ''}`}
-            onClick={() => handleNavigation('/profile')}
+            className={`sidebar-profile-button ${isActive('/profile') || (userData && isActive(`/${userData.username}`)) ? 'active' : ''}`}
+            onClick={() => {
+              if (isAuthenticated && userData) {
+                // Navegar al perfil del usuario autenticado
+                handleNavigation(`/${userData.username}`);
+              } else {
+                // Navegar a la página de perfil general
+                handleNavigation('/profile');
+              }
+            }}
           >
             <ProfileIcon className="sidebar-profile-icon" />
             <span>Perfil</span>
           </button>
 
-          {/* Botón Cerrar sesión con ícono */}
-          <button 
-            className="sidebar-signout-button"
-            onClick={() => handleButtonClick('Cerrar sesión')}
-          >
-            <SignOutIconIcon className="sidebar-signout-icon" />
-            <span>Cerrar sesión</span>
-          </button>
+          {/* Botón Cerrar sesión con ícono - Solo se muestra si el usuario está autenticado */}
+          {isAuthenticated && (
+            <button 
+              className="sidebar-signout-button"
+              onClick={handleSignOut}
+            >
+              <SignOutIconIcon className="sidebar-signout-icon" />
+              <span>Cerrar sesión</span>
+            </button>
+          )}
         </div>
       </nav>
 
       {/* Línea divisoria visual */}
       <hr className="sidebar-divider" />
 
-      {/* Botones de autenticación */}
-      <div className="sidebar-authn-buttons">
-        {/* Botón Crea tu cuenta */}
-        <button 
-          className="sidebar-signup-button"
-          onClick={() => handleNavigation('/signup')}
-        >
-          Crea tu cuenta
-        </button>
+      {/* Botones de autenticación - Solo se muestran si el usuario no está autenticado */}
+      {!isAuthenticated && (
+        <div className="sidebar-authn-buttons">
+          {/* Botón Crea tu cuenta */}
+          <button 
+            className="sidebar-signup-button"
+            onClick={() => handleNavigation('/signup')}
+          >
+            Crea tu cuenta
+          </button>
 
-        {/* Botón Inicia sesión */}
-        <button 
-          className="sidebar-signin-button"
-          onClick={() => handleNavigation('/signin')}
-        >
-          Inicia sesión
-        </button>
-      </div>
+          {/* Botón Inicia sesión */}
+          <button 
+            className="sidebar-signin-button"
+            onClick={() => handleNavigation('/signin')}
+          >
+            Inicia sesión
+          </button>
+        </div>
+      )}
     </div>
   );
 }
