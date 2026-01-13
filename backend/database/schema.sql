@@ -8,12 +8,12 @@ CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(100) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
-    real_name VARCHAR(100),
+    real_name VARCHAR(100) NULL,
     password_hash VARCHAR(255) NOT NULL,
     birth_date DATE,
-    bio TEXT,
+    bio TEXT NULL,
     profile_picture_url VARCHAR(255),
-    profile_url VARCHAR(100) UNIQUE,
+    profile_url VARCHAR(100) UNIQUE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

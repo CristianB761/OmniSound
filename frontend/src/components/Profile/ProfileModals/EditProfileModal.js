@@ -9,10 +9,8 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
   const [profileUrl, setProfileUrl] = useState(currentUser?.profileUrl || 'artista'); // URL personalizada del perfil
   const [realName, setRealName] = useState(currentUser?.realName || ''); // Nombre real del usuario
   const [bio, setBio] = useState(currentUser?.bio || ''); // Biografía del usuario
-
   const [profilePicture, setProfilePicture] = useState(null); // Foto de perfil seleccionada
   const [picturePreview, setPicturePreview] = useState(null); // Vista previa de la foto
-
   const [originalProfileUrl, setOriginalProfileUrl] = useState(currentUser?.profileUrl || 'artista'); // URL original para detectar cambios
   const [showUrlWarning, setShowUrlWarning] = useState(false); // Controla la visibilidad de la advertencia de URL
 
@@ -43,19 +41,22 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
       setRealName(currentUser?.realName || '');
       setBio(currentUser?.bio || '');
       setOriginalProfileUrl(currentUser?.profileUrl || 'artista');
-      setProfilePicture(null);
-      setPicturePreview(null);
+      setProfilePicture(null); // Esto se mantiene para nueva foto
+      
+      // Cargar la foto de perfil actual si existe
+      if (currentUser?.profile_picture_url) {
+        // Si es una URL completa, usarla directamente
+        if (currentUser.profile_picture_url.startsWith('http')) {
+          setPicturePreview(currentUser.profile_picture_url);
+        } else {
+          // Si es una ruta relativa, construir la URL completa
+          setPicturePreview(`http://localhost:5000${currentUser.profile_picture_url}`);
+        }
+      } else {
+        setPicturePreview(null);
+      }
     }
   }, [isOpen, currentUser]);
-
- // Efecto para mostrar advertencia cuando se cambia la URL original
-  useEffect(() => {
-    if (profileUrl !== originalProfileUrl && profileUrl.trim() !== '') {
-      setShowUrlWarning(true);
-    } else {
-      setShowUrlWarning(false);
-    }
-  }, [profileUrl, originalProfileUrl]);
 
   // Valida que el nombre de usuario tenga al menos 3 caracteres
   const isValidUsername = (username) => {
@@ -69,16 +70,31 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
     return urlRegex.test(url);
   };
 
+  // Función para verificar si hay cambios en el formulario
+  const hasChanges = () => {
+    const originalUser = currentUser || {};
+    return (
+      displayName.trim() !== (originalUser.username || '') ||
+      profileUrl.trim() !== (originalUser.profileUrl || 'artista') ||
+      realName.trim() !== (originalUser.realName || '') ||
+      bio.trim() !== (originalUser.bio || '') ||
+      profilePicture !== null
+    );
+  };
+
   // Determina si el formulario completo es válido
   const isFormValid = isValidUsername(displayName) && isValidProfileUrl(profileUrl);
+
+  // El botón se habilita solo cuando hay cambios válidos
+  const enableSaveButton = isFormValid && hasChanges();
 
   // Maneja la subida de la foto de perfil
   const handlePictureUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Verifica que sea una foto
-    if (!file.type.startsWith('picture/')) return;
+    // Verifica que sea una imagen
+    if (!file.type.startsWith('image/')) return;
 
     setProfilePicture(file);
     const reader = new FileReader();
@@ -102,16 +118,96 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
   };
 
   // Prepara los datos y llama a la función onSave del componente padre
-  const handleSave = () => {
-    const userData = {
-      displayName,
-      profileUrl,
-      realName,
-      bio,
-      profilePicture
-    };
-    onSave(userData);
-    onClose();
+  const handleSave = async () => {
+    if (!enableSaveButton) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        console.error('No se encontró token de autenticación');
+        return;
+      }
+
+      // Subir foto de perfil si hay una nueva
+      let uploadedPictureUrl = null;
+      if (profilePicture) {
+        const formData = new FormData();
+        formData.append('profile_picture', profilePicture);
+
+        const uploadResponse = await fetch('http://localhost:5000/api/profile/upload-picture', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const uploadData = await uploadResponse.json();
+
+        if (uploadResponse.ok) {
+          uploadedPictureUrl = uploadData.profile_picture_url;
+          console.log('Foto de perfil subida exitosamente:', uploadedPictureUrl);
+        } else {
+          console.error('Error al subir foto de perfil:', uploadData.error);
+          // Continuar con la actualización de perfil incluso si falla la subida de foto
+        }
+      }
+
+      // Preparar datos del perfil (sin incluir la foto)
+      const userData = {
+        username: displayName.trim(),
+        profile_url: profileUrl.trim(),
+        real_name: realName.trim(),
+        bio: bio.trim()
+      };
+
+      // Actualizar perfil
+      const response = await fetch('http://localhost:5000/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Actualizar localStorage con los nuevos datos del usuario
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const updatedUser = {
+          ...storedUser,
+          username: data.profile.username,
+          real_name: data.profile.real_name,
+          bio: data.profile.bio,
+          profile_url: data.profile.profile_url
+        };
+
+        // Si se subió una nueva foto, actualizar la URL en localStorage
+        if (uploadedPictureUrl) {
+          updatedUser.profile_picture_url = uploadedPictureUrl;
+        }
+
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+
+        // Llamar a onSave con los nuevos datos
+        onSave({
+          displayName: data.profile.username,
+          profileUrl: data.profile.profile_url,
+          realName: data.profile.real_name,
+          bio: data.profile.bio,
+          profilePicture: uploadedPictureUrl || null
+        });
+        
+        onClose();
+      } else {
+        console.error('Error al actualizar perfil:', data.error);
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+    }
   };
 
   // Si el modal no está abierto, no renderiza nada
@@ -141,14 +237,14 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
             type="file"
             ref={fileInputRef}
             onChange={handlePictureUpload}
-            accept="picture/*" // Acepta cualquier tipo de foto
+            accept="image/*" // Acepta cualquier tipo de foto
             className="edit-profile-file-input"
           />
           <div className="edit-profile-picture-container">
             {/* Foto de perfil */}
             <div 
               className="edit-profile-picture-circle"
-              style={picturePreview ? { backgroundPicture: `url(${picturePreview})` } : {}}
+              style={picturePreview ? { backgroundImage: `url(${picturePreview})` } : {}}
             ></div>
             <button 
               className="edit-profile-picture-button"
@@ -245,11 +341,12 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           >
             Cancelar
           </button>
-          {/* Botón Guardar cambios - Se habilita solo cuando es válido */}
+
+          {/* Botón Guardar cambios - Se habilita solo cuando hay cambios válidos */}
           <button 
             className="edit-profile-save-button"
             onClick={handleSave}
-            disabled={!isFormValid}
+            disabled={!enableSaveButton}
           >
             Guardar cambios
           </button>

@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const authRoutes = require('./src/routes/authRoutes');
 const { promisePool } = require('./src/config/database');
+const authRoutes = require('./src/routes/authRoutes');
 const profileRoutes = require('./src/routes/profileRoutes');
 
 const app = express();
@@ -16,6 +16,11 @@ app.use(cors({
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+const path = require('path');
+
+// Servir archivos estáticos desde la carpeta uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Usar rutas de autenticación
 app.use('/api/auth', authRoutes);
@@ -64,10 +69,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`===================================`);
-  console.log(`Servidor backend iniciado`);
-  console.log(`URL: http://localhost:${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-  console.log(`===================================`);
+app.listen(PORT, async () => {
+    try {
+        // Verificar conexión a DB
+        const [rows] = await promisePool.query('SELECT 1');
+        console.log('Base de datos conectada');
+
+        console.log(`\n===================================`);
+        console.log(`Servidor backend iniciado`);
+        console.log(`URL: http://localhost:${PORT}`);
+        console.log(`Health: http://localhost:${PORT}/api/health`);
+        console.log(`Entorno: ${process.env.NODE_ENV}`);
+        console.log(`===================================`);
+    } catch (error) {
+        console.error('Error conectando a la base de datos:', error.message);
+        process.exit(1);
+    }
 });

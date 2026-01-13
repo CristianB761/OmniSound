@@ -13,11 +13,20 @@ body {
 
 /* Contenedor inicial que envuelve toda la aplicación React */
 .app {
-  display: flex; /* Layout flexible para sidebar y contenido */
   min-height: 100vh; /* Ocupa al menos toda la altura de la ventana */
   font-family: 'Arial', sans-serif; /* Fuente base para toda la aplicación */
   background-color: #0d0d0d;
+  overflow-x: hidden;
+}
+
+/* Solo para las páginas con sidebar */
+.main-layout, .upload-layout {
   margin-left: 280px; /* Espacio para el sidebar fijo */
+}
+
+/* Solo para las páginas sin sidebar */
+.auth-layout {
+  margin-left: 0;
 }
 
 /* Contenedor para páginas de signin, passwordreset y signup */

@@ -142,6 +142,50 @@ const User = {
   findById: async (id) => {
     const [rows] = await promisePool.query('SELECT * FROM users WHERE id = ?', [id]);
     return rows;
+  },
+
+// Buscar usuario por profile_url
+findByProfileUrl: async (profileUrl) => {
+  const [rows] = await promisePool.query('SELECT * FROM users WHERE profile_url = ?', [profileUrl]);
+  return rows;
+},
+
+  // Actualizar perfil de usuario
+  updateProfile: async (userId, userData) => {
+    const { username, real_name, bio, profile_url } = userData;
+    
+    const updateFields = [];
+    const updateValues = [];
+
+    if (username !== undefined) {
+      updateFields.push('username = ?');
+      updateValues.push(username);
+    }
+    if (real_name !== undefined) {
+      updateFields.push('real_name = ?');
+      updateValues.push(real_name);
+    }
+    if (bio !== undefined) {
+      updateFields.push('bio = ?');
+      updateValues.push(bio);
+    }
+    if (profile_url !== undefined) {
+      updateFields.push('profile_url = ?');
+      updateValues.push(profile_url);
+    }
+
+    if (updateFields.length === 0) {
+      return null;
+    }
+
+    updateValues.push(userId);
+
+    const [result] = await promisePool.query(
+      `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`,
+      updateValues
+    );
+
+    return result;
   }
 };
 

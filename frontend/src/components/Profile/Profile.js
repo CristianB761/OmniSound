@@ -62,7 +62,7 @@ function Profile() {
 
         // Caso 2: Con sesión en /profile → Redirigir a Perfil
         if (token && currentUser && !username) {
-          console.log(`Autenticado- Redirigiendo a Profile: /${currentUser.username}`);
+          console.log(`Autenticado - Redirigiendo a Profile: /${currentUser.username}`);
           navigate(`/${currentUser.username}`);
           return;
         }
@@ -73,7 +73,7 @@ function Profile() {
         let headers = {};
         
         if (profileUsername) {
-          endpoint = `/api/profile/${profileUsername}`;
+          endpoint = `http://localhost:5000/api/profile/${profileUsername}`;
 
           // Verificar si es el perfil propio
           if (currentUser && currentUser.username === profileUsername) {
@@ -85,8 +85,10 @@ function Profile() {
         }
 
         // Hacer la petición al backend
-        const response = await fetch(`http://localhost:5000${endpoint}`, {
-          headers
+        const response = await fetch(`http://localhost:5000/api/profile/${profileUsername}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
 
         if (response.ok) {
@@ -95,12 +97,13 @@ function Profile() {
             username: data.profile.username,
             realName: data.profile.real_name || '',
             bio: data.profile.bio || '',
-            profileUrl: data.profile.profile_picture_url || '',
+            profileUrl: data.profile.profile_url || '',
             stats: data.profile.stats
           });
 
+          // Cargar la foto de perfil desde el backend
           if (data.profile.profile_picture_url) {
-            setProfilePicture(data.profile.profile_picture_url);
+            setProfilePicture(`http://localhost:5000${data.profile.profile_picture_url}`);
           }
 
           console.log(`Perfil cargado: ${data.profile.username}`);
@@ -159,13 +162,15 @@ function Profile() {
       profileUrl: newData.profileUrl || prev.profileUrl
     }));
 
-    // Si hay una nueva foto, actualiza el estado
+    // Si hay una nueva foto, actualizar el estado con la URL completa
     if (newData.profilePicture) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePicture(reader.result); // Guarda la foto como data URL
-      };
-      reader.readAsDataURL(newData.profilePicture);
+      // Si newData.profilePicture ya es una URL completa, usarla directamente
+      if (newData.profilePicture.startsWith('http')) {
+        setProfilePicture(newData.profilePicture);
+      } else {
+        // Si es una ruta relativa, construir la URL completa
+        setProfilePicture(`http://localhost:5000${newData.profilePicture}`);
+      }
     }
 
     console.log('Perfil actualizado:', newData);
@@ -218,7 +223,7 @@ function Profile() {
         {/* Foto de perfil - Vacía por defecto */}
         <div 
           className="profile-picture-circle"
-          style={profilePicture ? { backgroundPicture: `url(${profilePicture})` } : {}}
+          style={profilePicture ? { backgroundImage: `url(${profilePicture})` } : {}}
         ></div>
 
         {/* Contenedor de información del artista */}

@@ -62,7 +62,7 @@
   height: 100%;
 }
 
-/* ===== SECCIÓN DE IMAGEN DE PERFIL ===== */
+/* ===== SECCIÓN DE FOTO DE PERFIL ===== */
 .edit-profile-picture-section,
 .edit-profile-picture-container {
   display: flex;
@@ -89,6 +89,7 @@
   background-color: #1e1e1e; /* Color de fondo por defecto */
   background-size: cover; /* Ajusta la foto al círculo */
   background-position: center; /* Centra la foto */
+  background-repeat: no-repeat; /* Para evitar repetición */
 }
 
 /* ===== ESTILOS COMPARTIDOS PARA BOTONES ===== */

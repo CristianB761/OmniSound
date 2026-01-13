@@ -16,21 +16,21 @@ import './App.css';
 // Layout para páginas con sidebar y musicplayer
 const MainLayout = ({ children }) => {
   return (
-    <>
+    <div className="main-layout">
       <SideBar />
       {children}
       <MusicPlayer />
-    </>
+    </div>
   );
 };
 
 // Layout para páginas solo con sidebar
 const UploadLayout = ({ children }) => {
   return (
-    <>
+    <div className="upload-layout">
       <SideBar />
       {children}
-    </>
+    </div>
   );
 };
 
@@ -51,6 +51,28 @@ function App() {
 
           {/* Ruta For You como Ruta Inicial */}
           <Route path="/" element={<Navigate to="/foryou" replace />} />
+
+          {/* ===== AUTHLAYOUT ===== */}
+          {/* Ruta para Sign In */}
+          <Route path="/signin" element={
+            <AuthLayout>
+              <SignIn />
+            </AuthLayout>
+          } />
+
+          {/* Ruta para Password Reset */}
+          <Route path="/passwordreset" element={
+            <AuthLayout>
+              <PasswordReset />
+            </AuthLayout>
+          } />
+
+           {/* Ruta para Sign Up */}
+          <Route path="/signup" element={
+            <AuthLayout>
+              <SignUp />
+            </AuthLayout>
+          } />
 
           {/* ===== MAINLAYOUT ===== */}
           {/* Ruta para For You */}
@@ -81,20 +103,6 @@ function App() {
             </MainLayout>
           } />
 
-          {/* Ruta para Perfil */}
-          <Route path="/profile" element={
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          } />
-
-          {/* Ruta dinámica para Perfil */}
-          <Route path="/:username" element={
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          } />
-
           {/* ===== UPLOADLAYOUT ===== */}
           {/* Ruta para Subir */}
           <Route path="/upload" element={
@@ -103,26 +111,20 @@ function App() {
             </UploadLayout>
           } />
 
-          {/* ===== AUTHLAYOUT ===== */}
-          {/* Ruta para Sign In */}
-          <Route path="/signin" element={
-            <AuthLayout>
-              <SignIn />
-            </AuthLayout>
+
+          {/* ===== RUTAS DE PERFIL ===== */}
+          {/* Ruta dinámica para Perfil */}
+          <Route path="/:username" element={
+            <MainLayout>
+              <Profile />
+            </MainLayout>
           } />
 
-          {/* Ruta para Password Reset */}
-          <Route path="/passwordreset" element={
-            <AuthLayout>
-              <PasswordReset />
-            </AuthLayout>
-          } />
-
-           {/* Ruta para Sign Up */}
-          <Route path="/signup" element={
-            <AuthLayout>
-              <SignUp />
-            </AuthLayout>
+          {/* Ruta para Perfil */}
+          <Route path="/profile" element={
+            <MainLayout>
+              <Profile />
+            </MainLayout>
           } />
         </Routes>
       </div>
