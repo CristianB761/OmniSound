@@ -5,6 +5,7 @@ require('dotenv').config();
 const { promisePool } = require('./src/config/database');
 const authRoutes = require('./src/routes/authRoutes');
 const profileRoutes = require('./src/routes/profileRoutes');
+const songRoutes = require('./src/routes/songRoutes');
 
 const app = express();
 
@@ -27,6 +28,13 @@ app.use('/api/auth', authRoutes);
 
 // Usar rutas de perfil
 app.use('/api/profile', profileRoutes);
+
+// Usar rutas de canciones
+app.use('/api/songs', songRoutes);
+
+// Servir archivos de audios e imágenes de canciones
+app.use('/uploads/audios', express.static(path.join(__dirname, 'uploads/audios')));
+app.use('/uploads/song-images', express.static(path.join(__dirname, 'uploads/song-images')));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

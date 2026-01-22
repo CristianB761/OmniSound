@@ -1,0 +1,661 @@
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.metadata-container {
+  flex: 1;
+  padding: 30px;
+  background-color: #0d0d0d;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: lightgray;
+}
+
+/* Deshabilitar selección de texto en toda la página */
+.metadata-container * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* ===== ENCABEZADO ===== */
+.metadata-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+/* Botón para volver atrás */
+.metadata-back-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: lightgray;
+  cursor: pointer;
+  padding: 8px;
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.metadata-back-button:hover {
+  color: ghostwhite;
+}
+
+/* Icono del botón de volver */
+.back-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Título principal */
+.metadata-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: ghostwhite;
+  margin: 0;
+  text-align: center;
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+.metadata-content {
+  display: flex;
+  gap: 40px;
+  flex: 1;
+}
+
+/* ===== PANELES IZQUIERDO Y DERECHO ===== */
+.metadata-left-panel,
+.metadata-right-panel {
+  flex: 1;
+  background-color: #121212;
+  border-radius: 8px;
+  padding: 30px;
+  border: 1px solid #2c2c2c;
+}
+
+/* Panel izquierdo: alineación centrada */
+.metadata-left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== SECCIÓN DE SUBIR IMAGEN ===== */
+.upload-image-section {
+  margin-bottom: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Contenedor para la subida de imagen */
+.image-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Cuadrado para la portada del álbum */
+.album-cover-square {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  background-color: #1e1e1e;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2c2c2c;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Placeholder cuando no hay imagen */
+.album-cover-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: dimgray;
+  gap: 12px;
+}
+
+/* Icono del placeholder */
+.album-cover-placeholder svg {
+  width: 60px;
+  height: 60px;
+  color: #2c2c2c;
+}
+
+/* Botón para subir imagen */
+.upload-image-button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background-color: #2c2c2c;
+  color: lightgray;
+  min-width: 140px;
+  transition: all 0.3s ease;
+}
+
+.upload-image-button:hover:not(:disabled) {
+  background-color: #464646;
+  color: ghostwhite;
+}
+
+.upload-image-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Input oculto para subir archivo */
+.album-cover-input {
+  display: none;
+}
+
+/* ===== SECCIÓN DE INFORMACIÓN DEL ARCHIVO ===== */
+.file-info-section {
+  margin-top: 0;
+  width: 100%;
+}
+
+/* Títulos de sección */
+.file-info-title,
+.audio-player-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: lightgray;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Detalles de información del audio */
+.audio-info-details {
+  background-color: #1e1e1e;
+  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid #2c2c2c;
+}
+
+/* Cada detalle individual */
+.audio-info-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.audio-info-detail:last-child {
+  margin-bottom: 0;
+}
+
+/* Etiqueta del detalle */
+.audio-info-label {
+  color: dimgray;
+}
+
+/* Valor del detalle */
+.audio-info-value {
+  color: lightgray;
+  font-weight: 600;
+}
+
+/* ===== SECCIÓN DEL REPRODUCTOR DE AUDIO ===== */
+.audio-player-section {
+  margin-top: 30px;
+  width: 100%;
+}
+
+/* Reproductor de audio */
+.metadata-audio-player {
+  width: 100%;
+  border-radius: 4px;
+  background-color: #1e1e1e;
+}
+
+/* Panel de controles del reproductor */
+.metadata-audio-player::-webkit-media-controls-panel {
+  background-color: #1e1e1e;
+}
+
+/* ===== TÍTULO DE SECCIÓN EN PANEL DERECHO ===== */
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: lightgray;
+  margin-bottom: 30px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2c2c2c;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== FORMULARIO ===== */
+.metadata-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mensaje de error */
+.metadata-error {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid firebrick;
+  color: firebrick;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Grupo de campos del formulario */
+.metadata-form-group {
+  margin-bottom: 24px;
+}
+
+.metadata-form-group:last-of-type {
+  margin-bottom: 10px;
+}
+
+/* Etiquetas de los campos */
+.metadata-label {
+  display: block;
+  color: lightgray;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Asterisco para campos obligatorios */
+.metadata-label span {
+  color: firebrick;
+  margin-left: 2px;
+}
+
+/* ===== INPUTS, TEXTAREA Y SELECT (ESTILOS COMPARTIDOS) ===== */
+.metadata-input,
+.metadata-textarea,
+.genre-select {
+  width: 100%;
+  background-color: #1e1e1e;
+  color: lightgray;
+  border: 1px solid #2c2c2c;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* Placeholder */
+.metadata-input::placeholder,
+.metadata-textarea::placeholder,
+.genre-select::placeholder {
+  color: dimgray;
+}
+
+/* Efecto hover cuando no está enfocado */
+.metadata-input:hover:not(:focus),
+.metadata-textarea:hover:not(:focus),
+.genre-select:hover:not(:focus) {
+  border-color: dimgray;
+  background-color: #2c2c2c;
+}
+
+/* Efecto focus */
+.metadata-input:focus,
+.metadata-textarea:focus,
+.genre-select:focus {
+  outline: none;
+  border-color: lightseagreen;
+  background-color: #2c2c2c;
+}
+
+/* Estilo cuando está deshabilitado */
+.metadata-input:disabled,
+.metadata-textarea:disabled,
+.genre-select:disabled {
+  background-color: #1e1e1e;
+  color: dimgray;
+  cursor: not-allowed;
+}
+
+/* Textarea específico */
+.metadata-textarea {
+  font-family: inherit;
+  resize: none;
+  min-height: 100px;
+}
+
+/* Contenedor de descripción */
+.description-container {
+  position: relative;
+}
+
+/* Contador de caracteres */
+.char-counter {
+  text-align: right;
+  color: dimgray;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Scrollbar personalizada para textarea */
+.metadata-textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.metadata-textarea::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 4px;
+}
+
+.metadata-textarea::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 4px;
+}
+
+.metadata-textarea::-webkit-scrollbar-thumb:hover {
+  background: dimgray;
+}
+
+/* Ejemplo de URL */
+.url-example {
+  font-size: 14px;
+  font-weight: bold;
+  color: dimgray;
+  margin-top: 6px;
+  font-family: monospace;
+  background-color: transparent;
+  border: none;
+  word-break: break-all;
+}
+
+/* ===== SELECT DE GÉNERO ===== */
+.genre-select-container {
+  position: relative;
+}
+
+.genre-select {
+  appearance: none;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+/* ===== ETIQUETAS (TAGS) ===== */
+/* Contenedor de input de etiquetas */
+.tags-input-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background-color: #1e1e1e;
+  border: 1px solid #2c2c2c;
+  border-radius: 4px;
+  padding: 8px 12px;
+  min-height: 44px;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover cuando no está enfocado */
+.tags-input-container:hover:not(:focus-within) {
+  border-color: dimgray;
+  background-color: #2c2c2c;
+}
+
+/* Efecto focus */
+.tags-input-container:focus-within {
+  border-color: lightseagreen;
+  background-color: #2c2c2c;
+}
+
+/* Cada etiqueta individual */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: lightseagreen;
+  color: #121212;
+  padding: 4px 8px 4px 10px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+/* Botón para eliminar etiqueta */
+.tag-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #121212;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.3s ease;
+}
+
+.tag-remove:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.tag-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Icono del botón de eliminar */
+.tag-remove svg {
+  width: 10px;
+  height: 10px;
+  fill: currentColor;
+}
+
+/* Input para agregar etiquetas */
+.tags-input {
+  flex: 1;
+  min-width: 120px;
+  background: none;
+  border: none;
+  color: lightgray;
+  font-size: 14px;
+  padding: 6px 0;
+  outline: none;
+  min-height: 30px;
+  transition: all 0.3s ease;
+  margin: 0;
+}
+
+.tags-input::placeholder {
+  color: dimgray;
+}
+
+.tags-input:disabled {
+  color: dimgray;
+  cursor: not-allowed;
+}
+
+/* Contador de etiquetas */
+.tags-counter {
+  text-align: right;
+  color: dimgray;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===== SECCIÓN DE PRIVACIDAD ===== */
+.privacy-section {
+  margin-top: 10px;
+  padding-top: 15px;
+  border-top: 1px solid #2c2c2c;
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+}
+
+.privacy-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 40px;
+  justify-content: flex-start;
+}
+
+.privacy-label {
+  color: lightgray;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin: 0;
+  line-height: 1;
+}
+
+.privacy-options {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.privacy-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  height: 20px;
+}
+
+/* Radio buttons personalizados */
+.privacy-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  border: 2px solid #444;
+  border-radius: 50%;
+  background-color: #2c2c2c;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.privacy-option input[type="radio"]:checked {
+  border-color: lightseagreen;
+}
+
+.privacy-option input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: lightseagreen;
+  border-radius: 50%;
+}
+
+.privacy-option input[type="radio"]:hover {
+  border-color: #666;
+}
+
+.privacy-option input[type="radio"]:checked:hover {
+  border-color: teal;
+}
+
+.privacy-option input[type="radio"]:checked:hover::after {
+  background-color: teal;
+}
+
+.privacy-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.privacy-option-label {
+  font-size: 14px;
+  color: lightgray;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.privacy-option:hover .privacy-option-label {
+  color: ghostwhite;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.metadata-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 15px;
+  margin-top: 15px;
+  border-top: 1px solid #2c2c2c;
+}
+
+/* Estilos compartidos para botones */
+.metadata-cancel-button,
+.metadata-submit-button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+/* Botón Cancelar */
+.metadata-cancel-button {
+  background-color: #2c2c2c;
+  color: lightgray;
+}
+
+.metadata-cancel-button:hover:not(:disabled) {
+  background-color: #464646;
+  color: ghostwhite;
+}
+
+/* Botón Publicar/Guardar */
+.metadata-submit-button {
+  background-color: lightseagreen;
+  color: #121212;
+}
+
+.metadata-submit-button:hover:not(:disabled) {
+  background-color: teal;
+  color: #0d0d0d;
+}
+
+/* Estilo cuando los botones están deshabilitados */
+.metadata-cancel-button:disabled,
+.metadata-submit-button:disabled {
+  background-color: #1e1e1e;
+  color: dimgray;
+  cursor: not-allowed;
+}

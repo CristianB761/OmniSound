@@ -1,4 +1,4 @@
-/* Evita que el usuario pueda seleccionar texto en todo el forgotpassword */
+/* Evita que el usuario pueda seleccionar texto en todo el SignUp */
 .signup-page * {
   -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
   -moz-user-select: none; /* Para Firefox */

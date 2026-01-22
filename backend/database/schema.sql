@@ -57,3 +57,57 @@ CREATE TABLE IF NOT EXISTS password_resets (
     INDEX idx_token (token),
     INDEX idx_email (email)
 );
+
+-- ============================================
+-- TABLA 5: CANCIONES
+-- ============================================
+CREATE TABLE IF NOT EXISTS songs (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NULL,
+    artist VARCHAR(100) NOT NULL,
+    genre VARCHAR(50),
+    tags TEXT NULL,
+    description TEXT NULL,
+    privacy ENUM('public', 'private') DEFAULT 'public',
+    audio_url VARCHAR(500) NOT NULL,
+    image_url VARCHAR(500),
+    duration INT,
+    likes INT DEFAULT 0,
+    reposts INT DEFAULT 0,
+    comments INT DEFAULT 0,
+    plays INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    INDEX idx_slug (slug)
+);
+
+-- ============================================
+-- TABLA 6: COMENTARIOS EN CANCIONES
+-- ============================================
+CREATE TABLE IF NOT EXISTS song_comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    song_id INT NOT NULL,
+    user_id INT NOT NULL,
+    time_in_song INT,
+    comment TEXT NOT NULL,
+    color VARCHAR(7),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (song_id) REFERENCES songs (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+-- ============================================
+-- TABLA 7: LIKE EN CANCIONES
+-- ============================================
+CREATE TABLE IF NOT EXISTS song_likes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    song_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_like (song_id, user_id),
+    FOREIGN KEY (song_id) REFERENCES songs (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);

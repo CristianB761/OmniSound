@@ -40,10 +40,10 @@ const User = {
           [nextNumber]
         );
       }
-      
+
       await promisePool.query('COMMIT');
       return nextNumber;
-      
+
     } catch (error) {
       await promisePool.query('ROLLBACK');
       console.error('Error obteniendo próximo número de usuario:', error);
@@ -105,7 +105,7 @@ const User = {
   savePasswordResetToken: async (email, token) => {
     // Eliminar tokens anteriores para este email
     await promisePool.query('DELETE FROM password_resets WHERE email = ?', [email]);
-    
+
     // Insertar nuevo token
     const [result] = await promisePool.query(
       'INSERT INTO password_resets (email, token) VALUES (?, ?)',

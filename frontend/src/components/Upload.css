@@ -1,34 +1,50 @@
 /* Evita que el usuario pueda seleccionar texto en todo el upload */
 .upload-container, 
 .upload-container * {
-  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
-  -moz-user-select: none; /* Para Firefox */
-  -ms-user-select: none; /* Para Internet Explorer/Edge */
-  user-select: none; /* Estándar moderno */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* ===== CONTENEDOR DEL UPLOAD ===== */
 .upload-container {
-  flex: 1; /* Ocupa todo el espacio disponible restante */
+  flex: 1;
   padding: 40px;
-  background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el sidebar */
-  min-height: 100vh; /* Altura mínima de toda la ventana */
+  background-color: #0d0d0d;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ===== ÍCONO ===== */
+/* ===== ÍCONOS ===== */
 .upload-cloud-icon {
-  width: 64px; /* Tamaño del ícono */
+  width: 64px;
   height: 64px;
-  color: dimgray; /* Color del ícono */
-  margin-bottom: 8px; /* Espacio entre el ícono y el texto */
-  transition: color 0.3s ease; /* Transición suave para efectos */
+  color: dimgray;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
 }
 
-/* Efecto hover en el ícono cuando se hace hover en el dropzone */
-.upload-dropzone:hover .upload-cloud-icon {
-  color: darkgray; /* Cambia color del ícono al hacer hover */
+.audio-file-icon {
+  width: 48px;
+  height: 48px;
+  color: lightseagreen;
+  margin-right: 16px;
+}
+
+/* Efecto drag over */
+.upload-dropzone.drag-over {
+  background-color: #1e1e1e;
+  border-color: lightseagreen;
+}
+
+.upload-dropzone.drag-over .upload-cloud-icon {
+  color: lightseagreen;
+}
+
+.upload-dropzone.drag-over .upload-dropzone-text {
+  color: ghostwhite;
 }
 
 /* Título de la sección */
@@ -37,39 +53,39 @@
   font-weight: bold;
   color: lightgray;
   padding-bottom: 12px;
-  border-bottom: 1px solid #2c2c2c; /* Línea divisoria debajo del título */
-  margin-bottom: 32px; /* Espacio después del título */
-  letter-spacing: 0.5px; /* Espaciado entre letras para mejor legibilidad */
+  border-bottom: 1px solid #2c2c2c;
+  margin-bottom: 32px;
+  letter-spacing: 0.5px;
 }
 
 /* ===== CONTENIDO ===== */
 .upload-content {
   display: flex;
   flex-direction: column;
-  gap: 32px; /* Espacio entre secciones */
-  flex: 1; /* Ocupa todo el espacio disponible */
+  gap: 32px;
+  flex: 1;
 }
 
 /* ===== ÁREA DE ARRASTRAR Y SOLTAR ===== */
 .upload-dropzone {
-  border: 2px dashed #2c2c2c; /* Borde punteado */
-  border-radius: 8px; /* Esquinas redondeadas */
-  padding: 60px 40px; /* Espaciado interno generoso */
-  text-align: center; /* Centra el contenido */
-  background-color: #121212; /* Fondo ligeramente más claro */
+  border: 2px dashed #2c2c2c;
+  border-radius: 8px;
+  padding: 60px 40px;
+  text-align: center;
+  background-color: #121212;
   transition: all 0.3s ease;
-  flex: 1; /* Ocupa todo el espacio vertical disponible */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centra verticalmente el contenido */
-  align-items: center; /* Centra horizontalmente el contenido */
-  min-height: 400px; /* Altura mínima */
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
 /* Efecto hover en el área de dropzone */
 .upload-dropzone:hover {
-  background-color: #1e1e1e; /* Fondo ligeramente más claro al hacer hover */
-  border-color: dimgray; /* Cambia color del borde al hacer hover */
+  background-color: #1e1e1e;
+  border-color: dimgray;
 }
 
 /* Texto del área de dropzone */
@@ -83,7 +99,7 @@
 
 /* Efecto hover en el texto cuando se hace hover en el dropzone */
 .upload-dropzone:hover .upload-dropzone-text {
-  color: darkgray; /* Cambia a ghostwhite al hacer hover */
+  color: darkgray;
 }
 
 /* ===== BOTÓN ELEGIR ARCHIVOS ===== */
@@ -97,6 +113,7 @@
   font-size: 16px;
   font-weight: 600;
   transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 
 /* Efecto hover del botón */
@@ -105,16 +122,63 @@
   color: #0d0d0d;
 }
 
+/* ===== PREVISUALIZACIÓN DE ARCHIVO ===== */
+.upload-file-preview {
+  display: flex;
+  align-items: center;
+  background-color: rgba(32, 178, 171, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 20px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.upload-file-info {
+  flex: 1;
+  text-align: left;
+}
+
+.upload-file-name {
+  font-weight: bold;
+  color: ghostwhite;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.upload-file-size {
+  color: darkgray;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.upload-file-status {
+  color: lightseagreen;
+  font-size: 14px;
+}
+
+/* ===== MENSAJE DE ERROR ===== */
+.upload-error-message {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff5555;
+  color: #ff5555;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 20px;
+  max-width: 500px;
+  width: 100%;
+}
+
 /* ===== CONTENEDOR DE SECCIONES DE INFORMACIÓN ===== */
 .upload-info-sections-row {
   display: flex;
   flex-direction: row;
-  gap: 32px; /* Espacio entre secciones */
+  gap: 32px;
 }
 
 /* ===== SECCIONES DE INFORMACIÓN ===== */
 .upload-info-section {
-  flex: 1; /* Cada sección ocupa el mismo ancho */
+  flex: 1;
   padding: 0;
 }
 
@@ -130,5 +194,5 @@
 .upload-info-text {
   font-size: 14px;
   color: dimgray;
-  line-height: 1.5; /* Mejor legibilidad */
+  line-height: 1.5;
 }

@@ -1,3 +1,4 @@
+// En: src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SideBar from './components/SideBar';
@@ -11,7 +12,9 @@ import Following from './components/Following';
 import Notifications from './components/Notifications';
 import Upload from './components/Upload';
 import Profile from './components/Profile/Profile';
+import Metadata from './components/Metadata';
 import './App.css';
+import { PlayerProvider } from './context/PlayerContext';
 
 // Layout para páginas con sidebar y musicplayer
 const MainLayout = ({ children }) => {
@@ -45,90 +48,35 @@ const AuthLayout = ({ children }) => {
 
 function App() {
   return (
-    <Router>
-      <div className="app">
-        <Routes>
+    <PlayerProvider>
+      <Router>
+        <div className="app">
+          <Routes>
+            {/* Ruta For You como Ruta Inicial */}
+            <Route path="/" element={<Navigate to="/foryou" replace />} />
 
-          {/* Ruta For You como Ruta Inicial */}
-          <Route path="/" element={<Navigate to="/foryou" replace />} />
+            {/* ===== AUTHLAYOUT ===== */}
+            <Route path="/signin" element={<AuthLayout><SignIn /></AuthLayout>} />
+            <Route path="/passwordreset" element={<AuthLayout><PasswordReset /></AuthLayout>} />
+            <Route path="/signup" element={<AuthLayout><SignUp /></AuthLayout>} />
 
-          {/* ===== AUTHLAYOUT ===== */}
-          {/* Ruta para Sign In */}
-          <Route path="/signin" element={
-            <AuthLayout>
-              <SignIn />
-            </AuthLayout>
-          } />
+            {/* ===== MAINLAYOUT ===== */}
+            <Route path="/foryou" element={<MainLayout><ForYou /></MainLayout>} />
+            <Route path="/explore" element={<MainLayout><Explore /></MainLayout>} />
+            <Route path="/following" element={<MainLayout><Following /></MainLayout>} />
+            <Route path="/notifications" element={<MainLayout><Notifications /></MainLayout>} />
 
-          {/* Ruta para Password Reset */}
-          <Route path="/passwordreset" element={
-            <AuthLayout>
-              <PasswordReset />
-            </AuthLayout>
-          } />
+            {/* ===== UPLOADLAYOUT ===== */}
+            <Route path="/upload" element={<UploadLayout><Upload /></UploadLayout>} />
+            <Route path="/metadata" element={<AuthLayout><Metadata /></AuthLayout>} />
 
-           {/* Ruta para Sign Up */}
-          <Route path="/signup" element={
-            <AuthLayout>
-              <SignUp />
-            </AuthLayout>
-          } />
-
-          {/* ===== MAINLAYOUT ===== */}
-          {/* Ruta para For You */}
-          <Route path="/foryou" element={
-            <MainLayout>
-              <ForYou />
-            </MainLayout>
-          } />
-
-          {/* Ruta para Explore */}
-          <Route path="/explore" element={
-            <MainLayout>
-              <Explore />
-            </MainLayout>
-          } />
-
-          {/* Ruta para Siguiendo */}
-          <Route path="/following" element={
-            <MainLayout>
-              <Following />
-            </MainLayout>
-          } />
-
-          {/* Ruta para Notificaciones */}
-          <Route path="/notifications" element={
-            <MainLayout>
-              <Notifications />
-            </MainLayout>
-          } />
-
-          {/* ===== UPLOADLAYOUT ===== */}
-          {/* Ruta para Subir */}
-          <Route path="/upload" element={
-            <UploadLayout>
-              <Upload />
-            </UploadLayout>
-          } />
-
-
-          {/* ===== RUTAS DE PERFIL ===== */}
-          {/* Ruta dinámica para Perfil */}
-          <Route path="/:username" element={
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          } />
-
-          {/* Ruta para Perfil */}
-          <Route path="/profile" element={
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          } />
-        </Routes>
-      </div>
-    </Router>
+            {/* ===== RUTAS DE PERFIL ===== */}
+            <Route path="/:username" element={<MainLayout><Profile /></MainLayout>} />
+            <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
+          </Routes>
+        </div>
+      </Router>
+    </PlayerProvider>
   );
 }
 

@@ -1,0 +1,317 @@
+/* Evita que el usuario pueda seleccionar texto en el SongCard */
+.songcard,
+.songcard * {
+  -webkit-user-select: none; /* Para navegadores WebKit (Chrome, Safari) */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* Estándar moderno */
+}
+
+/* ===== CONTENEDOR PRINCIPAL DEL SONGCARD ===== */
+.songcard {
+  display: flex;
+  background-color: #121212; /* Color de fondo oscuro consistente con la aplicación */
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #2c2c2c; /* Borde sutil para separación visual */
+  height: 180px; /* Altura fija para consistencia */
+}
+
+/* ===== CONTENEDOR DE LA IMAGEN DE LA CANCIÓN ===== */
+.songcard-image-container {
+  position: relative; /* Para posicionar elementos hijos de forma absoluta */
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0; /* Evita que la imagen se reduzca */
+  margin-right: 16px; /* Separación con el contenido */
+  border-radius: 6px;
+  overflow: hidden; /* Asegura que el overlay no sobresalga */
+  align-self: center; /* Centrado verticalmente */
+  cursor: pointer; /* Indica que es interactivo */
+}
+
+/* Imagen de la canción (color dim gray cuando no hay imagen) */
+.songcard-image {
+  width: 100%;
+  height: 100%;
+  background-color: #2c2c2c; /* Dim gray - sin imagen */
+  object-fit: cover; /* Mantiene la proporción si hubiera imagen */
+  border-radius: 6px;
+}
+
+.songcard-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #2c2c2c;
+  border-radius: 6px;
+}
+
+/* ===== BOTÓN DE PLAY/PAUSE EN LA IMAGEN ===== */
+.songcard-play-pause-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centrado perfecto */
+  background: none; /* Sin fondo */
+  border: none; /* Sin borde */
+  color: ghostwhite; /* Color del icono */
+  cursor: pointer;
+  padding: 0;
+  width: 62px;
+  height: 62px;
+  flex-shrink: 0; /* Mantiene su tamaño sin reducirse */
+  z-index: 2; /* Asegura que esté por encima del overlay */
+}
+
+/* Iconos de play/pause */
+.songcard-play-icon,
+.songcard-pause-icon {
+  width: 58px;
+  height: 58px;
+  fill: ghostwhite; /* Color de los iconos */
+}
+
+/* Ajuste visual para el icono de play */
+.songcard-play-icon {
+  transform: scale(1.16); /* Ligeramente más grande para balance visual */
+}
+
+/* ===== CONTENIDO PRINCIPAL - LADO DERECHO ===== */
+.songcard-content {
+  flex: 1; /* Ocupa todo el espacio disponible restante */
+  display: flex;
+  flex-direction: column; /* Elementos apilados verticalmente */
+  min-width: 0; /* Permite que el texto se trunque correctamente */
+  justify-content: space-between; /* Distribuye el espacio verticalmente */
+}
+
+/* ===== ENCABEZADO: ARTISTA Y TIEMPO ===== */
+.songcard-header {
+  display: flex;
+  justify-content: space-between; /* Artista a la izquierda, tiempo a la derecha */
+  align-items: center;
+  margin-bottom: 4px; /* Espacio antes del título */
+}
+
+/* Estilos para el artista y tiempo */
+.songcard-time-ago {
+  color: dimgray; /* Color gris para texto secundario */
+  line-height: 1.2; /* Altura de línea para mejor legibilidad */
+  white-space: nowrap; /* Evita salto de línea */
+  overflow: hidden; /* Oculta el texto que sobresale */
+  text-overflow: ellipsis; /* Muestra "..." cuando el texto es muy largo */
+}
+
+.songcard-time-ago { 
+  font-size: 12px; /* Tamaño más pequeño para el tiempo */
+}
+
+/* ===== FILA DE INFORMACIÓN: TÍTULO Y GÉNERO ===== */
+.songcard-info-row {
+  display: flex;
+  justify-content: space-between; /* Título a la izquierda, género a la derecha */
+  align-items: flex-start; /* Alineación en la parte superior */
+  margin-bottom: 8px; /* Espacio antes del waveform */
+}
+
+/* Título de la canción */
+.songcard-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: lightgray; /* Color principal para el título */
+  line-height: 1.3;
+  flex: 1; /* Ocupa el espacio disponible */
+  margin-right: 12px; /* Separación con el género */
+  white-space: nowrap; /* Evita salto de línea */
+  overflow: hidden; /* Oculta el texto que sobresale */
+  text-overflow: ellipsis; /* Muestra "..." cuando el texto es muy largo */
+}
+
+/* Género de la canción */
+.songcard-genre {
+  font-size: 14px;
+  color: lightseagreen; /* Color distintivo para el género */
+  background-color: rgba(32, 178, 171, 0.1); /* Fondo semitransparente */
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap; /* Evita salto de línea */
+}
+
+/* ===== CONTENEDOR DEL WAVEFORM Y DURACIÓN ===== */
+.songcard-waveform-container {
+  position: relative; /* Para posicionar la duración de forma absoluta */
+  margin-bottom: 20px; /* Aumentado para compensar la eliminación de comentarios de artistas */
+  flex: 1; /* Ocupa espacio disponible */
+  min-height: 50px; /* Altura mínima para el waveform */
+}
+
+/* Duración de la canción superpuesta en el waveform */
+.songcard-duration {
+  position: absolute;
+  bottom: 4px; /* Posicionado en la parte inferior */
+  right: 4px; /* Posicionado en la parte derecha */
+  font-size: 10px;
+  color: lightgray;
+  z-index: 3; /* Por encima del waveform */
+  background-color: #121212; /* Fondo para mejor legibilidad */
+  padding: 2px 4px;
+  border-radius: 2px;
+  pointer-events: none; /* No intercepta clicks en el waveform */
+  font-variant-numeric: tabular-nums; /* Usa números de ancho fijo para mejor alineación */
+}
+
+/* Contenedor del waveform */
+.songcard-waveform {
+  height: 50px;
+  cursor: pointer; /* Indica que es interactivo */
+  border-radius: 2px;
+  overflow: hidden; /* Asegura que el contenido no sobresalga */
+  background-color: transparent; /* Fondo transparente */
+  position: relative; /* Para que los elementos absolutos dentro se posicionen correctamente */
+}
+
+/* ===== PIE DE PÁGINA: ACCIONES Y ESTADÍSTICAS ===== */
+.songcard-footer {
+  display: flex;
+  justify-content: space-between; /* Acciones a la izquierda, estadísticas a la derecha */
+  align-items: center;
+  margin-top: auto; /* Empuja el pie de página hacia abajo */
+}
+
+/* ===== CONTENEDOR DE ACCIONES ===== */
+.songcard-actions {
+  display: flex;
+  gap: 8px; /* Espacio entre botones de acción */
+  align-items: center;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.songcard-action-button {
+  display: flex;
+  align-items: center;
+  background: none; /* Sin fondo */
+  border: none; /* Sin borde */
+  color: lightgray; /* Color base de los botones */
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.3s ease; /* Transición suave para todos los cambios */
+}
+
+/* Efecto hover para todos los botones de acción */
+.songcard-action-button:hover { 
+  color: ghostwhite; /* Color más brillante al hacer hover */
+}
+
+/* Iconos de los botones de acción */
+.songcard-action-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 4px; /* Separación con el texto */
+  fill: currentColor; /* Hereda el color del botón padre */
+  transition: fill 0.3s ease; /* Transición suave para el color del icono */
+}
+
+/* Texto de conteo en los botones (likes, reposts) */
+.songcard-action-count {
+  font-size: 14px;
+  font-weight: bold;
+  color: lightgray; /* Color base */
+  transition: color 0.3s ease; /* Transición suave para el color */
+}
+
+/* Botones sin contador (solo icono) */
+.songcard-playlist-button,
+.songcard-copy-button,
+.songcard-report-button {
+  padding: 6px;
+  min-width: 32px; /* Ancho mínimo para consistencia */
+  justify-content: center; /* Centra el icono */
+}
+
+/* Elimina el margen derecho del icono en botones sin texto */
+.songcard-playlist-button .songcard-action-icon,
+.songcard-copy-button .songcard-action-icon,
+.songcard-report-button .songcard-action-icon {
+  margin-right: 0;
+}
+
+/* ===== CONTENEDOR DE ESTADÍSTICAS ===== */
+.songcard-stats {
+  display: flex;
+  gap: 16px; /* Espacio entre elementos de estadísticas */
+}
+
+/* Elementos individuales de estadísticas */
+.songcard-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Espacio entre icono y texto */
+  color: dimgray; /* Color para texto secundario */
+}
+
+/* Iconos de estadísticas */
+.songcard-stat-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Texto de valores de estadísticas */
+.songcard-stat-value {
+  font-size: 12px;
+  color: dimgray; /* Color para texto secundario */
+}
+
+/* ===== ESTADOS ACTIVOS PARA BOTONES ===== */
+.songcard-like-button.active,
+.songcard-repost-button.active {
+  color: lightseagreen; /* Color de acento para estado activo */
+}
+
+/* Iconos en estado activo */
+.songcard-like-button.active .songcard-action-icon,
+.songcard-repost-button.active .songcard-action-icon {
+  fill: lightseagreen; /* Color de acento para iconos activos */
+}
+
+/* Texto de conteo en estado activo */
+.songcard-like-button.active .songcard-action-count,
+.songcard-repost-button.active .songcard-action-count {
+  color: lightseagreen; /* Color de acento para texto activo */
+}
+
+/* Estilos para WaveSurfer - mantener fondo transparente */
+wavesurfer-player {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+/* Asegurar que el waveform de WaveSurfer tenga fondo transparente */
+.songcard-waveform wave {
+  background-color: transparent;
+}
+
+/* ===== BOTÓN DE ARTISTA CLICKABLE ===== */
+.songcard-artist-button {
+  background: none;
+  border: none;
+  color: dimgray;
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: color 0.3s ease;
+  max-width: 100%; /* Evita que se desborde */
+  display: inline-block; /* Para que el ellipsis funcione */
+}
+
+.songcard-artist-button:hover {
+  color: lightgray;
+  text-decoration: underline;
+}

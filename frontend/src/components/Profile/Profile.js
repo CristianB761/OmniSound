@@ -5,6 +5,7 @@ import EditProfileModal from './ProfileModals/EditProfileModal';
 import ShareProfileModal from './ProfileModals/ShareProfileModal';
 import ProfileStatsModal from './ProfileModals/ProfileStatsModal';
 import CreatePlaylistModal from './ProfileModals/CreatePlaylistModal';
+import SongCard from '../SongCard';
 
 // Importar ícono como componentes React
 import { ReactComponent as ShareIcon } from '../../icons/ShareIcon.svg';
@@ -20,6 +21,8 @@ function Profile() {
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false); // Estado para el modal crea tu playlist
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userSongs, setUserSongs] = useState([]);
+  const [loadingSongs, setLoadingSongs] = useState(false);
 
   const { username } = useParams();
   const navigate = useNavigate(); // Hook para navegación entre rutas
@@ -43,6 +46,29 @@ function Profile() {
 
   // Filtros disponibles para la sección "Pistas"
   const contentFilters = ['Más recientes', 'Populares', 'Más antiguos'];
+
+  // Función para cargar canciones del usuario
+  const loadUserSongs = async (userId) => {
+    if (!userId) return;
+
+    setLoadingSongs(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/songs/user/${userId}`, {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setUserSongs(data.songs);
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar canciones del usuario:', error);
+    } finally {
+      setLoadingSongs(false);
+    }
+  };
 
   // Efecto para verificar autenticación y cargar perfil
   useEffect(() => {
@@ -107,6 +133,11 @@ function Profile() {
           }
 
           console.log(`Perfil cargado: ${data.profile.username}`);
+
+          // Cargar las canciones del usuario después de obtener el perfil
+          if (data.profile.id) {
+            loadUserSongs(data.profile.id);
+          }
         } else {
           console.error('Error al cargar perfil');
           setUserData({
@@ -149,7 +180,6 @@ function Profile() {
   // Función para manejar la creación de playlist
   const handleSavePlaylist = (playlistData) => {
     console.log('Playlist creada:', playlistData);
-    // Aquí iría la lógica futura para guardar la playlist
   };
 
   // Función para guardar los cambios del perfil
@@ -351,13 +381,22 @@ function Profile() {
         )}
       </div>
 
-      {/* Contenedor para el contenido de las pistas/álbumes/etc */}
-      <div className="profile-content">
-        {/* Mensaje temporal hasta que se implemente el contenido real */}
-        <p className="profile-empty-state">
-          Contenido de {activeSection} {activeSection === 'Pistas' ? `(${activeFilter})` : ''} aparecerá aquí
-        </p>
-      </div>
+      {/* Contenido de canciones solo para la sección "Pistas" */}
+      {activeSection === 'Pistas' && (
+        loadingSongs ? (
+          <p className="profile-empty-state">Cargando canciones...</p>
+        ) : userSongs.length > 0 ? (
+          <div className="profile-songs-container">
+            {userSongs.map(song => (
+              <SongCard key={song.id} song={song} />
+            ))}
+          </div>
+        ) : (
+          <p className="profile-empty-state">
+            {isOwnProfile ? 'Aún no has subido ninguna canción' : 'Este usuario no ha subido canciones'}
+          </p>
+        )
+      )}
     </div>
   );
 }

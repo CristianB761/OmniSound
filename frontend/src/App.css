@@ -22,6 +22,21 @@ body {
 /* Solo para las páginas con sidebar */
 .main-layout, .upload-layout {
   margin-left: 280px; /* Espacio para el sidebar fijo */
+  /* Añadir padding-bottom solo cuando el MusicPlayer está visible */
+  transition: padding-bottom 0.3s ease;
+}
+
+/* Cuando no hay MusicPlayer visible, ajustar el padding */
+.main-layout:has(+ .musicplayer[style*="display: none"]),
+.main-layout:not(:has(+ .musicplayer)) {
+  padding-bottom: 0;
+}
+
+/* Cuando el MusicPlayer está visible, añadir padding-bottom */
+.main-layout + .musicplayer:not([style*="display: none"]) {
+  ~ .main-layout {
+    padding-bottom: 90px; /* Altura del MusicPlayer */
+  }
 }
 
 /* Solo para las páginas sin sidebar */

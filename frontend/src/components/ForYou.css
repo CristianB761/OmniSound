@@ -13,6 +13,7 @@
   padding: 40px;
   background-color: #0d0d0d; /* Color de fondo ligeramente más oscuro que el sidebar */
   min-height: 100vh; /* Altura mínima de toda la ventana */
+  padding-bottom: 120px; /* Espacio extra para el musicplayer */
 }
 
 /* Título de la sección */
@@ -24,4 +25,11 @@
   border-bottom: 1px solid #2c2c2c; /* Línea divisoria debajo del título */
   margin-bottom: 32px; /* Espacio después del título */
   letter-spacing: 0.5px; /* Espaciado entre letras para mejor legibilidad */
+}
+
+/* Contenedor de la lista de canciones */
+.songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espacio entre las tarjetas de canciones */
 }

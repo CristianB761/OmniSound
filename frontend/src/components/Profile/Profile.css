@@ -252,17 +252,20 @@
   color: #121212;
 }
 
-/* ===== CONTENIDO DEL PERFIL ===== */
-.profile-content {
-  background-color: #121212; /* Color de fondo ligeramente más claro que la página */
-  border-radius: 8px; /* Esquinas redondeadas */
-  padding: 40px;
-  text-align: center;
+/* ===== CONTENEDOR DE CANCIONES DEL PERFIL ===== */
+.profile-songs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%; /* Ocupa el ancho completo del perfil */
+  margin-top: 0; /* Sin margen superior */
 }
 
-/* Mensaje de estado vacío */
+/* ===== MENSAJE DE ESTADO VACÍO ===== */
 .profile-empty-state {
   color: dimgray;
   font-size: 16px;
   margin: 0;
+  text-align: left;
+  margin-top: 20px;
 }
