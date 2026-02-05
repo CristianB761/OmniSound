@@ -116,8 +116,15 @@ const profileController = {
         return res.status(400).json({ error: 'Debe proporcionar al menos un campo para actualizar' });
       }
 
+      // Obtener el usuario actual para comparar el username anterior
+      const [currentUser] = await promisePool.query(
+        'SELECT username FROM users WHERE id = ?',
+        [userId]
+      );
+      const oldUsername = currentUser[0].username;
+
       // Si se está cambiando el username, verificar que no esté en uso por otro usuario
-      if (username) {
+      if (username && username !== oldUsername) {
         const existingUser = await User.findByUsername(username);
         if (existingUser.length > 0 && existingUser[0].id !== userId) {
           return res.status(400).json({ error: 'El nombre de usuario ya está en uso' });
@@ -139,6 +146,15 @@ const profileController = {
         bio,
         profile_url
       });
+
+      // ===== ACTUALIZAR ARTISTA EN CANCIONES SI CAMBIA EL USERNAME =====
+      if (username && username !== oldUsername) {
+        await User.updateArtistInSongs(userId, username);
+        console.log(`\nArtista actualizado en canciones:`);
+        console.log(`Usuario: ${userId}`);
+        console.log(`Username anterior: ${oldUsername}`);
+        console.log(`Username nuevo: ${username}`);
+      }
 
       // Obtener el usuario actualizado
       const users = await User.findById(userId);

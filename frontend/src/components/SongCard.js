@@ -20,7 +20,8 @@ function SongCard({ song = null }) {
   const wavesurfer = useRef(null);
   
   const [isHovering, setIsHovering] = useState(false);
-  const [isReposted, setIsReposted] = useState(false);
+  const [isReposted, setIsReposted] = useState(false); // Estado para reposts
+  const [repostCount, setRepostCount] = useState(song?.reposts || 0); // Contador de reposts
   const [imageError, setImageError] = useState(false);
   const [waveformReady, setWaveformReady] = useState(false);
 
@@ -45,6 +46,33 @@ function SongCard({ song = null }) {
   // Determinar si esta canción tiene like
   const songIsLiked = song ? isSongLiked(song.id) : false;
 
+  // ==================== VERIFICAR REPOST AL CARGAR ====================
+  useEffect(() => {
+    const checkUserRepost = async () => {
+      const token = localStorage.getItem('token');
+      if (!token || !song?.id) return;
+      
+      try {
+        const response = await fetch(`http://localhost:5000/api/songs/${song.id}/repost`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setIsReposted(data.reposted);
+          }
+        }
+      } catch (error) {
+        console.error('Error al verificar repost:', error);
+      }
+    };
+    
+    checkUserRepost();
+  }, [song?.id]);
+
   // ==================== INICIALIZAR WAVESURFER (SOLO VISUAL) ====================
   useEffect(() => {
     if (!song?.audioUrl || !waveformRef.current || wavesurfer.current) {
@@ -54,7 +82,7 @@ function SongCard({ song = null }) {
     console.log('Inicializando WaveSurfer para:', song.title);
 
     try {
-      // Crear instancia de WaveSurfer sin reproducir
+      // Crear instancia de WaveSurfer SIN reproducir
       wavesurfer.current = WaveSurfer.create({
         container: waveformRef.current,
         waveColor: '#696969',
@@ -131,7 +159,7 @@ function SongCard({ song = null }) {
     togglePlayPause();
   };
 
-  // ==================== Navegar al perfil del artista ====================
+  // ==================== NUEVA FUNCIÓN: Navegar al perfil del artista ====================
   const handleArtistClick = () => {
     if (!song?.artist) return;
     
@@ -167,8 +195,44 @@ function SongCard({ song = null }) {
     toggleLike(song.id);
   };
 
-  const handleRepost = () => {
-    setIsReposted(!isReposted);
+  const handleRepost = async () => {
+    if (!song || !song.id) return;
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log('Debes iniciar sesión para repostear');
+      // Opcional: redirigir a login
+      return;
+    }
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/songs/${song.id}/repost`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setIsReposted(data.reposted);
+          // Actualizar contador
+          if (data.reposted) {
+            setRepostCount(prev => prev + 1);
+          } else {
+            setRepostCount(prev => Math.max(0, prev - 1));
+          }
+          
+          console.log(`Canción ${song.id} ${data.reposted ? 'reposteada' : 'no reposteada'}`);
+        }
+      } else {
+        console.error('Error al hacer repost');
+      }
+    } catch (error) {
+      console.error('Error al hacer repost:', error);
+    }
   };
 
   const handleAddToPlaylist = () => {
@@ -242,7 +306,7 @@ function SongCard({ song = null }) {
       <div className="songcard-content">
         {/* Fila superior: Artista y tiempo transcurrido */}
         <div className="songcard-header">
-          {/* Botón Artista */}
+          {/* Artista ahora es clickable */}
           <button 
             className="songcard-artist-button"
             onClick={handleArtistClick}
@@ -260,7 +324,7 @@ function SongCard({ song = null }) {
           )}
         </div>
 
-        {/* Waveform de WaveSurfer */}
+        {/* Waveform de WaveSurfer (sincronizado y limpio) */}
         <div className="songcard-waveform-container">
           <div className="songcard-duration">
             {song.duration}
@@ -271,13 +335,14 @@ function SongCard({ song = null }) {
             onClick={handleWaveformClick}
             style={{ cursor: isCurrentSong ? 'pointer' : 'default' }}
           >
+            {/* WaveSurfer maneja internamente el progreso */}
           </div>
         </div>
 
         {/* Fila inferior: Acciones y estadísticas */}
         <div className="songcard-footer">
           <div className="songcard-actions">
-            {/* Botón Like */}
+            {/* Botón Like - Ahora sincronizado con el contexto */}
             <button 
               className={`songcard-action-button songcard-like-button ${songIsLiked ? 'active' : ''}`}
               onClick={handleLike}
@@ -288,12 +353,15 @@ function SongCard({ song = null }) {
               </span>
             </button>
 
+            {/* Botón Repost - ACTUALIZADO con funcionalidad real */}
             <button 
               className={`songcard-action-button songcard-repost-button ${isReposted ? 'active' : ''}`}
               onClick={handleRepost}
             >
               <RepeatIcon className="songcard-action-icon" />
-              <span className={`songcard-action-count ${isReposted ? 'active' : ''}`}>{song.reposts}</span>
+              <span className={`songcard-action-count ${isReposted ? 'active' : ''}`}>
+                {repostCount}
+              </span>
             </button>
 
             <button 

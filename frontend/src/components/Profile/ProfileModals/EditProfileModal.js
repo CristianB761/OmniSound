@@ -1,25 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './EditProfileModal.css';
 
-// Importar ícono como componentes React
+// Importar ícono como componente React
 import { ReactComponent as CloseIcon } from '../../../icons/CloseIcon.svg';
 
 function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
-  const [displayName, setDisplayName] = useState(currentUser?.username || ''); // Nombre de usuario mostrado
+  const [displayName, setDisplayName] = useState(currentUser?.username || ''); // Nombre de usuario visible
   const [profileUrl, setProfileUrl] = useState(currentUser?.profileUrl || 'artista'); // URL personalizada del perfil
   const [realName, setRealName] = useState(currentUser?.realName || ''); // Nombre real del usuario
   const [bio, setBio] = useState(currentUser?.bio || ''); // Biografía del usuario
-  const [profilePicture, setProfilePicture] = useState(null); // Foto de perfil seleccionada
-  const [picturePreview, setPicturePreview] = useState(null); // Vista previa de la foto
-  const [originalProfileUrl, setOriginalProfileUrl] = useState(currentUser?.profileUrl || 'artista'); // URL original para detectar cambios
-  const [showUrlWarning, setShowUrlWarning] = useState(false); // Controla la visibilidad de la advertencia de URL
+
+  const [profilePicture, setProfilePicture] = useState(null); // Archivo de imagen seleccionado
+  const [picturePreview, setPicturePreview] = useState(null); // Vista previa de la imagen
+
+  const [originalProfileUrl, setOriginalProfileUrl] = useState(currentUser?.profileUrl || 'artista'); // URL original para comparar cambios
+  const [showUrlWarning, setShowUrlWarning] = useState(false); // Muestra advertencia si se cambia la URL
 
   const fileInputRef = useRef(null); // Referencia al input de archivo oculto
 
-  // Efecto para el shortcut de teclado
   useEffect(() => {
+    // Configurar tecla ESC para cerrar
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') onClose(); // ESC: Cierra el modal
+      if (event.key === 'Escape') onClose();
     };
 
     // Agrega el event listener cuando el componente se monta
@@ -33,7 +35,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
     };
   }, [isOpen, onClose]);
 
-  // Efecto para resetear los estados cuando se abre el modal
+  // Efecto para inicializar los campos cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
       setDisplayName(currentUser?.username || '');
@@ -41,15 +43,13 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
       setRealName(currentUser?.realName || '');
       setBio(currentUser?.bio || '');
       setOriginalProfileUrl(currentUser?.profileUrl || 'artista');
-      setProfilePicture(null); // Esto se mantiene para nueva foto
+      setProfilePicture(null);
       
-      // Cargar la foto de perfil actual si existe
+      // Cargar vista previa de la foto de perfil actual si existe
       if (currentUser?.profile_picture_url) {
-        // Si es una URL completa, usarla directamente
         if (currentUser.profile_picture_url.startsWith('http')) {
           setPicturePreview(currentUser.profile_picture_url);
         } else {
-          // Si es una ruta relativa, construir la URL completa
           setPicturePreview(`http://localhost:5000${currentUser.profile_picture_url}`);
         }
       } else {
@@ -63,14 +63,14 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
     return username.trim().length >= 3;
   };
 
-  // Valida que la URL tenga al menos 3 caracteres
+  // Valida que la URL del perfil solo contenga caracteres permitidos
   const isValidProfileUrl = (url) => {
     if (url.trim().length < 3) return false;
-    const urlRegex = /^[a-z0-9-_]+$/; // Solo letras minúsculas, números, guiones y guiones bajos
+    const urlRegex = /^[a-z0-9-_]+$/;
     return urlRegex.test(url);
   };
 
-  // Función para verificar si hay cambios en el formulario
+  // Verifica si hubo cambios en los campos del formulario
   const hasChanges = () => {
     const originalUser = currentUser || {};
     return (
@@ -82,55 +82,47 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
     );
   };
 
-  // Determina si el formulario completo es válido
   const isFormValid = isValidUsername(displayName) && isValidProfileUrl(profileUrl);
+  const enableSaveButton = isFormValid && hasChanges(); // Habilita botón solo si hay cambios válidos
 
-  // El botón se habilita solo cuando hay cambios válidos
-  const enableSaveButton = isFormValid && hasChanges();
-
-  // Maneja la subida de la foto de perfil
+  // Maneja la selección de archivo para la foto de perfil
   const handlePictureUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Verifica que sea una imagen
     if (!file.type.startsWith('image/')) return;
 
     setProfilePicture(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPicturePreview(reader.result);
+      setPicturePreview(reader.result); // Crea vista previa como URL base64
     };
     reader.readAsDataURL(file);
   };
 
-  // Simula clic en el input de archivo oculto cuando se presiona el botón de foto
+  // Simula clic en el input de archivo oculto
   const handlePictureButtonClick = () => {
     fileInputRef.current.click();
   };
 
-  // Filtra la URL
+  // Filtra caracteres no permitidos en la URL del perfil
   const handleProfileUrlChange = (e) => {
-    const filteredValue = e.target.value
-      .toLowerCase() // Convierte todo a minúsculas
-      .replace(/[^a-z0-9-_]/g, ''); // Elimina caracteres no permitidos
+    const filteredValue = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
     setProfileUrl(filteredValue);
   };
 
-  // Prepara los datos y llama a la función onSave del componente padre
+  // Envía los datos del formulario al servidor
   const handleSave = async () => {
     if (!enableSaveButton) return;
 
     try {
       const token = localStorage.getItem('token');
-      
       if (!token) {
         console.error('No se encontró token de autenticación');
         return;
       }
 
-      // Subir foto de perfil si hay una nueva
       let uploadedPictureUrl = null;
+      // Sube la nueva foto de perfil si se seleccionó una
       if (profilePicture) {
         const formData = new FormData();
         formData.append('profile_picture', profilePicture);
@@ -147,14 +139,12 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
 
         if (uploadResponse.ok) {
           uploadedPictureUrl = uploadData.profile_picture_url;
-          console.log('Foto de perfil subida exitosamente:', uploadedPictureUrl);
         } else {
           console.error('Error al subir foto de perfil:', uploadData.error);
-          // Continuar con la actualización de perfil incluso si falla la subida de foto
         }
       }
 
-      // Preparar datos del perfil (sin incluir la foto)
+      // Prepara los datos del usuario para actualizar
       const userData = {
         username: displayName.trim(),
         profile_url: profileUrl.trim(),
@@ -162,7 +152,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
         bio: bio.trim()
       };
 
-      // Actualizar perfil
+      // Envía la solicitud para actualizar el perfil
       const response = await fetch('http://localhost:5000/api/profile', {
         method: 'PUT',
         headers: {
@@ -175,7 +165,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
       const data = await response.json();
 
       if (response.ok) {
-        // Actualizar localStorage con los nuevos datos del usuario
+        // Actualiza los datos del usuario en localStorage
         const storedUser = JSON.parse(localStorage.getItem('user'));
         const updatedUser = {
           ...storedUser,
@@ -185,14 +175,13 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           profile_url: data.profile.profile_url
         };
 
-        // Si se subió una nueva foto, actualizar la URL en localStorage
         if (uploadedPictureUrl) {
           updatedUser.profile_picture_url = uploadedPictureUrl;
         }
 
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
-        // Llamar a onSave con los nuevos datos
+        // Notifica al componente padre sobre los cambios guardados
         onSave({
           displayName: data.profile.username,
           profileUrl: data.profile.profile_url,
@@ -216,8 +205,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
   return (
     <div className="edit-profile-modal-overlay">
       <div className="edit-profile-modal">
-
-        {/* Botón Cerrar modal con ícono */}
+        {/* Botón Cerrar con ícono */}
         <button 
           className="edit-profile-close-button" 
           onClick={onClose}
@@ -226,22 +214,23 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           <CloseIcon className="edit-profile-close-icon" />
         </button>
 
-        {/* Encabezado del modal con título */}
+        {/* Encabezado del modal */}
         <div className="edit-profile-header">
+          {/* Título del modal */}
           <h2 className="edit-profile-title">Editar perfil</h2>
         </div>
 
-        {/* Sección de foto del perfil */}
+        {/* Sección para subir foto de perfil */}
         <div className="edit-profile-picture-section">
           <input
             type="file"
             ref={fileInputRef}
             onChange={handlePictureUpload}
-            accept="image/*" // Acepta cualquier tipo de foto
+            accept="image/*"
             className="edit-profile-file-input"
           />
+          {/* Foto de perfil */}
           <div className="edit-profile-picture-container">
-            {/* Foto de perfil */}
             <div 
               className="edit-profile-picture-circle"
               style={picturePreview ? { backgroundImage: `url(${picturePreview})` } : {}}
@@ -255,9 +244,9 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           </div>
         </div>
 
-        {/* Formulario de edición */}
+        {/* Formulario de edición de perfil */}
         <div className="edit-profile-form">
-          {/* Input Nombre de usuario (obligatorio) */}
+          {/* Input nombre de usuario (obligatorio) */}
           <div className="edit-profile-field">
             <label className="edit-profile-label">
               Nombre de usuario<span className="required-asterisk">*</span>
@@ -276,20 +265,20 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
             <label className="edit-profile-label">
               URL del perfil<span className="required-asterisk">*</span>
             </label>
-            {/* Prefijo fijo que no se puede editar */}
+            {/* Prefijo no editable */}
             <div className="edit-profile-url-container">
               <span className="edit-profile-url-prefix">omnisound.com/</span>
               <input
                 type="text"
                 className="edit-profile-input edit-profile-url-input"
-                placeholder=" " // Placeholder
+                placeholder=" "
                 value={profileUrl}
                 onChange={handleProfileUrlChange}
               />
             </div>
           </div>
 
-          {/* Input Nombre real (opcional) */}
+          {/* Input nombre real (opcional) */}
           <div className="edit-profile-field">
             <label className="edit-profile-label">Nombre</label>
             <input
@@ -301,7 +290,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
             />
           </div>
 
-          {/* Input Biografía (opcional) */}
+          {/* Input biografía (opcional) */}
           <div className="edit-profile-field">
             <label className="edit-profile-label">Biografía</label>
             <div className="edit-profile-bio-container">
@@ -310,8 +299,8 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
                 placeholder="Descripción breve"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                maxLength={160} // Máximo de caracteres
-                rows={4} // Limite de líneas
+                maxLength={160}
+                rows={4}
               />
               {/* Contador de caracteres */}
               <div className="edit-profile-char-count">
@@ -321,7 +310,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           </div>
         </div>
 
-        {/* Advertencia del cambio de URL */}
+        {/* Advertencia sobre cambio de URL */}
         {showUrlWarning && (
           <div className="edit-profile-url-warning">
             Aviso: Estás a punto de cambiar tu antigua URL.<br />
@@ -329,7 +318,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
           </div>
         )}
 
-        {/* Línea divisoria */}
+        {/* Línea divisoria visual */}
         <hr className="edit-profile-divider" />
 
         {/* Botones de acción */}
@@ -342,7 +331,7 @@ function EditProfileModal({ isOpen, onClose, onSave, currentUser }) {
             Cancelar
           </button>
 
-          {/* Botón Guardar cambios - Se habilita solo cuando hay cambios válidos */}
+          {/* Botón Guardar cambios */}
           <button 
             className="edit-profile-save-button"
             onClick={handleSave}

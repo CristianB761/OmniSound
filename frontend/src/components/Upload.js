@@ -1,36 +1,32 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Upload.css';
+import { usePlayer } from '../context/PlayerContext';
 
 // Importar iconos como componentes React
 import { ReactComponent as UploadCloud } from '../icons/UploadCloudIcon.svg';
 import { ReactComponent as AudioFileIcon } from '../icons/AudioFileIcon.svg';
 
 function Upload() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewAudio, setPreviewAudio] = useState(null);
-  const [fileError, setFileError] = useState('');
+  const { isPlaying, togglePlayPause, currentSong, playerVisible } = usePlayer(); // Obtener estado y funciones del reproductor desde el contexto
 
-  const fileInputRef = useRef(null);
-  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Indica si el usuario está autenticado
+  const [loading, setLoading] = useState(true); // Estado de carga durante la verificación de autenticación
+  const [selectedFile, setSelectedFile] = useState(null); // Archivo de audio seleccionado
+  const [previewAudio, setPreviewAudio] = useState(null); // URL temporal para previsualizar el audio
+  const [fileError, setFileError] = useState(''); // Mensaje de error si el archivo no es válido
 
-  useEffect(() => {
-    document.title = "OmniSound - Subir";
+  const fileInputRef = useRef(null); // Referencia al input de tipo file para abrir el selector de archivos
+  const navigate = useNavigate(); // Hook para navegar entre páginas
 
-    // Verificar autenticación al cargar el componente
-    checkAuthentication();
-  }, []); // Array vacío significa que solo se ejecuta una vez
-
-  // Función para verificar autenticación con el backend
+  // Función que verifica si el usuario tiene una sesión activa
   const checkAuthentication = async () => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token'); // Obtiene el token de autenticación
+    const storedUser = localStorage.getItem('user'); // Obtiene los datos del usuario
 
     if (token && storedUser) {
       try {
-        // Intentar obtener el perfil del usuario autenticado desde el backend
+        // Realiza una petición al servidor para validar el token
         const response = await fetch('http://localhost:5000/api/profile', {
           method: 'GET',
           headers: {
@@ -40,60 +36,68 @@ function Upload() {
         });
 
         if (response.ok) {
+          // Si la respuesta es OK, el usuario está autenticado
           setIsAuthenticated(true);
         } else {
-          // Si el token no es válido, limpiar el localStorage
+          // Si la respuesta no es OK, elimina los datos y establece como no autenticado
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setIsAuthenticated(false);
         }
       } catch (error) {
+        // Si hay error en la petición, elimina los datos y establece como no autenticado
         console.error('Error al verificar autenticación:', error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setIsAuthenticated(false);
       }
     } else {
+      // Si no hay token o datos de usuario, establece como no autenticado
       setIsAuthenticated(false);
     }
-    setLoading(false);
+
+    setLoading(false); // Finaliza el estado de carga
   };
 
-  // Validar archivo de audio
+  // Función que valida si un archivo de audio cumple con los requisitos
   const validateAudioFile = (file) => {
-    const validTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/flac', 'audio/x-m4a'];
-    const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
+    const validTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/flac', 'audio/x-m4a']; // Tipos MIME válidos
+    const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac']; // Extensiones de archivo válidas
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase(); // Obtiene la extensión del archivo
 
-    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-
+    // Verifica si el tipo MIME o la extensión son válidos
     if (!validTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
       return 'Formato de archivo no soportado. Usa MP3, WAV, OGG, M4A o FLAC.';
     }
 
-    if (file.size > 50 * 1024 * 1024) { // 50MB
+    // Verifica que el tamaño del archivo no exceda 50MB
+    if (file.size > 50 * 1024 * 1024) {
       return 'El archivo es muy grande (máximo 50MB)';
     }
 
+    // Retorna null si no hay errores
     return null;
   };
 
+  // Función para manejar la selección de un archivo
   const handleFileSelect = (file) => {
-    const error = validateAudioFile(file);
+    const error = validateAudioFile(file); // Valida el archivo seleccionado
+
     if (error) {
+      // Si hay error, actualiza el estado con el mensaje y limpia la selección
       setFileError(error);
       setSelectedFile(null);
       setPreviewAudio(null);
       return;
     }
 
-    setFileError('');
-    setSelectedFile(file);
+    setFileError(''); // Limpia cualquier error previo
+    setSelectedFile(file); // Almacena el archivo seleccionado
 
-    // Crear preview del audio
-    const audioUrl = URL.createObjectURL(file);
-    setPreviewAudio(audioUrl);
+    const audioUrl = URL.createObjectURL(file); // Crea una URL temporal para el archivo
+    setPreviewAudio(audioUrl); // Almacena la URL para previsualización
 
-    // Si está autenticado, redirigir a metadata
+    // Si el usuario está autenticado, navega a la página de metadatos
     if (isAuthenticated) {
       navigate('/metadata', { 
         state: { 
@@ -104,50 +108,77 @@ function Upload() {
     }
   };
 
+  // Función para manejar el cambio en el input de archivo
   const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // Obtiene el primer archivo seleccionado
+
     if (file) {
-      handleFileSelect(file);
+      handleFileSelect(file); // Llama a la función de manejo de selección
     }
   };
 
+  // Función para manejar el clic en el botón de elegir archivos
   const handleChooseFileClick = () => {
+    // Si no está autenticado, redirige a la página de inicio de sesión
     if (!isAuthenticated) {
-      // Redirigir a la página de Inicia sesión si no está autenticado
       navigate('/signin');
     } else {
+      // Si está autenticado, activa el input de archivo oculto
       fileInputRef.current.click();
     }
   };
 
-  // Función para manejar el arrastre de archivos sobre el dropzone
+  // Función para manejar el evento de arrastrar sobre la zona de drop
   const handleDragOver = (event) => {
-    event.preventDefault();
-    event.currentTarget.classList.add('drag-over');
+    event.preventDefault(); // Previene el comportamiento por defecto
+    event.currentTarget.classList.add('drag-over'); // Añade clase para feedback visual
   };
 
+  // Función para manejar el evento de salida del arrastre de la zona de drop
   const handleDragLeave = (event) => {
     event.preventDefault();
-    event.currentTarget.classList.remove('drag-over');
+    event.currentTarget.classList.remove('drag-over'); // Remueve la clase de feedback visual
   };
 
+  // Función para manejar el evento de soltar archivos en la zona de drop
   const handleDrop = (event) => {
     event.preventDefault();
     event.currentTarget.classList.remove('drag-over');
 
+    // Si no está autenticado, redirige a la página de inicio de sesión
     if (!isAuthenticated) {
-      // Redirigir a la página de Inicia sesión si no está autenticado
       navigate('/signin');
       return;
     }
 
-    const files = event.dataTransfer.files;
+    const files = event.dataTransfer.files; // Obtiene los archivos soltados
+
+    // Si hay archivos, procesa el primero
     if (files.length > 0) {
       handleFileSelect(files[0]);
     }
   };
 
-  // Si está cargando, mostrar un estado de carga simple
+  // Cambia el título de la pestaña del navegador cuando el componente se monta
+  useEffect(() => {
+    document.title = "OmniSound - Subir"; // Establece el título de la pestaña
+
+    checkAuthentication(); // Verifica la autenticación al montar el componente
+
+    // Si hay una canción reproduciéndose, la pausa automáticamente
+    if (playerVisible && currentSong && isPlaying) {
+      togglePlayPause();
+    }
+
+    // Función de limpieza para revocar la URL temporal cuando el componente se desmonte
+    return () => {
+      if (previewAudio) {
+        URL.revokeObjectURL(previewAudio);
+      }
+    };
+  }, []); // Array vacío significa que solo se ejecuta una vez
+
+  // Muestra un estado de carga mientras se verifica la autenticación
   if (loading) {
     return (
       <div className="upload-container">
@@ -163,33 +194,31 @@ function Upload() {
 
   return (
     <div className="upload-container">
-
       {/* Título de la sección */}
       <h2 className="upload-title">Subir</h2>
 
-      {/* Contenido de subida */}
       <div className="upload-content">
-        {/* Input oculto para archivos */}
+        {/* Input oculto para seleccionar archivos */}
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileInputChange}
-          accept=".mp3,.wav,.ogg,.m4a,.flac,audio/*"
-          style={{ display: 'none' }}
+          accept=".mp3,.wav,.ogg,.m4a,.flac,audio/*" // Formatos aceptados
+          style={{ display: 'none' }} // Oculto visualmente
         />
 
-        {/* Área de arrastrar y soltar */}
+        {/* Zona de arrastrar y soltar archivos */}
         <div 
           className="upload-dropzone"
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          {/* Ícono UploadCloud encima del texto */}
+          {/* Ícono Subir archivo */}
           <UploadCloud className="upload-cloud-icon" />
           <p className="upload-dropzone-text">Arrastra y suelta archivos de audio para empezar.</p>
 
-          {/* Botón Elegir archivos - Redirige a SignIn si no está autenticado */}
+          {/* Botón Elegir archivos */}
           <button 
             className="upload-choose-button"
             onClick={handleChooseFileClick}
@@ -197,12 +226,14 @@ function Upload() {
             Elegir archivos
           </button>
 
+          {/* Muestra mensaje de error si hay un problema con el archivo */}
           {fileError && (
             <div className="upload-error-message">
               {fileError}
             </div>
           )}
 
+          {/* Muestra información del archivo seleccionado si no hay errores */}
           {selectedFile && !fileError && (
             <div className="upload-file-preview">
               <AudioFileIcon className="audio-file-icon" />
@@ -219,15 +250,13 @@ function Upload() {
           )}
         </div>
 
-        {/* Contenedor para las secciones de información */}
+        {/* Sección de información sobre los límites y formatos */}
         <div className="upload-info-sections-row">
-          {/* Información de tamaño y duración */}
           <div className="upload-info-section">
             <h3 className="upload-info-title">Tamaño y duración</h3>
             <p className="upload-info-text">Tamaño máximo: 50 MB y duración del audio: 60 minutos.</p>
           </div>
 
-          {/* Información de formatos de archivo */}
           <div className="upload-info-section">
             <h3 className="upload-info-title">Formatos de archivo</h3>
             <p className="upload-info-text">Formatos soportados: MP3, WAV, OGG, M4A, FLAC.</p>

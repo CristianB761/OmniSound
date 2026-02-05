@@ -85,7 +85,33 @@ CREATE TABLE IF NOT EXISTS songs (
 );
 
 -- ============================================
--- TABLA 6: COMENTARIOS EN CANCIONES
+-- TABLA 6: LIKE EN CANCIONES
+-- ============================================
+CREATE TABLE IF NOT EXISTS song_likes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    song_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_like (song_id, user_id),
+    FOREIGN KEY (song_id) REFERENCES songs (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+-- ============================================
+-- TABLA 7: REPOST EN CANCIONES
+-- ============================================
+CREATE TABLE IF NOT EXISTS song_reposts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    song_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_repost (song_id, user_id),
+    FOREIGN KEY (song_id) REFERENCES songs (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+-- ============================================
+-- TABLA 8: COMENTARIOS EN CANCIONES
 -- ============================================
 CREATE TABLE IF NOT EXISTS song_comments (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -95,19 +121,6 @@ CREATE TABLE IF NOT EXISTS song_comments (
     comment TEXT NOT NULL,
     color VARCHAR(7),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (song_id) REFERENCES songs (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-);
-
--- ============================================
--- TABLA 7: LIKE EN CANCIONES
--- ============================================
-CREATE TABLE IF NOT EXISTS song_likes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    song_id INT NOT NULL,
-    user_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_like (song_id, user_id),
     FOREIGN KEY (song_id) REFERENCES songs (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );

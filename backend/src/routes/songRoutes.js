@@ -23,9 +23,15 @@ router.get('/user/:userId', songController.getUserSongs);
 // Incrementar reproducciones (público)
 router.post('/:songId/play', songController.incrementPlays);
 
-// Comentarios y likes (protegidos)
+// Comentarios (protegidos)
 router.post('/:songId/comment', authMiddleware, songController.addComment);
+
+// likes (protegidos)
 router.post('/:songId/like', authMiddleware, songController.toggleLike);
 router.get('/:songId/like', authMiddleware, songController.checkUserLike);
+
+// Reposts (protegidos)
+router.post('/:songId/repost', authMiddleware, songController.toggleRepost);
+router.get('/:songId/repost', authMiddleware, songController.checkUserRepost);
 
 module.exports = router;

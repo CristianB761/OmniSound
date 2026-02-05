@@ -186,6 +186,21 @@ findByProfileUrl: async (profileUrl) => {
     );
 
     return result;
+  },
+
+  // Actualizar artista en todas las canciones de un usuario
+  updateArtistInSongs: async (userId, newArtistName) => {
+    try {
+      const [result] = await promisePool.query(
+        'UPDATE songs SET artist = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
+        [newArtistName, userId]
+      );
+      console.log(`Artista actualizado en ${result.affectedRows} canciones para usuario ${userId}`);
+      return result;
+    } catch (error) {
+      console.error('Error al actualizar artista en canciones:', error);
+      throw error;
+    }
   }
 };
 

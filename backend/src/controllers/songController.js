@@ -36,7 +36,7 @@ const songController = {
         imageUrl = `/uploads/song-images/${req.files.image[0].filename}`;
       }
 
-      // Calcular duración
+      // Calcular duración (puedes usar una librería como node-id3 más adelante)
       const duration = req.body.duration || 0;
 
       // Crear canción en la base de datos con todos los campos
@@ -93,17 +93,17 @@ const songController = {
   getSongs: async (req, res) => {
     try {
       const { limit = 20, offset = 0 } = req.query;
-
+      
       const songs = await Song.findAll(parseInt(limit), parseInt(offset));
 
       // Formatear respuesta CON TIEMPO DINÁMICO Y HASHTAGS
       const formattedSongs = songs.map(song => {
-        // ============ CÁLCULO DE TIEMPO TRANSCURRIDO ============
+        // ============ CÁLCULO DE TIEMPO TRANSCURRIDO (IGUAL QUE EN getUserSongs) ============
         const createdDate = new Date(song.created_at);
         const now = new Date();
         const diffTime = Math.abs(now - createdDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+        
         let timeAgo = '';
         if (diffDays >= 365) {
           const years = Math.floor(diffDays / 365);
@@ -142,7 +142,7 @@ const songController = {
           title: song.title,
           artist: song.username, // Usar username del usuario como artista
           genre: hashtags.join(' '), // Unir todos los hashtags
-          timeAgo: timeAgo,
+          timeAgo: timeAgo, // ← ¡AHORA ES DINÁMICO!
           duration: durationFormatted,
           likes: song.likes,
           reposts: song.reposts,
@@ -169,7 +169,7 @@ const songController = {
   getUserSongs: async (req, res) => {
     try {
       const { userId } = req.params;
-
+      
       const songs = await Song.findByUserId(userId);
 
       // Formatear respuesta con tiempo transcurrido
@@ -179,7 +179,7 @@ const songController = {
         const now = new Date();
         const diffTime = Math.abs(now - createdDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+        
         let timeAgo = '';
         if (diffDays >= 365) {
           const years = Math.floor(diffDays / 365);
@@ -228,7 +228,8 @@ const songController = {
           audioUrl: song.audio_url,
           imageUrl: song.image_url,
           created_at: song.created_at,
-          slug: song.slug || song.title.toLowerCase().replace(/\s+/g, '-') // Para construir la URL
+          // Para construir la URL
+          slug: song.slug || song.title.toLowerCase().replace(/\s+/g, '-')
         };
       });
 
@@ -247,7 +248,7 @@ const songController = {
   incrementPlays: async (req, res) => {
     try {
       const { songId } = req.params;
-
+      
       await Song.incrementPlays(songId);
 
       res.json({
@@ -332,6 +333,44 @@ const songController = {
 
     } catch (error) {
       console.error('Error al verificar like:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  // Toggle repost
+  toggleRepost: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { songId } = req.params;
+
+      const result = await Song.toggleRepost(songId, userId);
+
+      res.json({
+        success: true,
+        reposted: result.reposted
+      });
+
+    } catch (error) {
+      console.error('Error al dar repost:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  // Verificar si el usuario ya hizo repost
+  checkUserRepost: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { songId } = req.params;
+
+      const reposted = await Song.userRepostedSong(songId, userId);
+
+      res.json({
+        success: true,
+        reposted
+      });
+
+    } catch (error) {
+      console.error('Error al verificar repost:', error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   }

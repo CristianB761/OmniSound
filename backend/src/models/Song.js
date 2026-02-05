@@ -89,7 +89,7 @@ const Song = {
   // Añadir comentario
   addComment: async (commentData) => {
     const { songId, userId, timeInSong, comment, color } = commentData;
-
+    
     const [result] = await promisePool.query(
       `INSERT INTO song_comments (song_id, user_id, time_in_song, comment, color) 
         VALUES (?, ?, ?, ?, ?)`,
@@ -136,6 +136,48 @@ const Song = {
   userLikedSong: async (songId, userId) => {
     const [rows] = await promisePool.query(
       'SELECT id FROM song_likes WHERE song_id = ? AND user_id = ?',
+      [songId, userId]
+    );
+    return rows.length > 0;
+  },
+
+  // Toggle repost
+  toggleRepost: async (songId, userId) => {
+    // Verificar si ya existe el repost
+    const [existing] = await promisePool.query(
+      'SELECT id FROM song_reposts WHERE song_id = ? AND user_id = ?',
+      [songId, userId]
+    );
+
+    if (existing.length > 0) {
+      // Eliminar repost
+      await promisePool.query(
+        'DELETE FROM song_reposts WHERE song_id = ? AND user_id = ?',
+        [songId, userId]
+      );
+      await promisePool.query(
+        'UPDATE songs SET reposts = reposts - 1 WHERE id = ?',
+        [songId]
+      );
+      return { reposted: false };
+    } else {
+      // Añadir repost
+      await promisePool.query(
+        'INSERT INTO song_reposts (song_id, user_id) VALUES (?, ?)',
+        [songId, userId]
+      );
+      await promisePool.query(
+        'UPDATE songs SET reposts = reposts + 1 WHERE id = ?',
+        [songId]
+      );
+      return { reposted: true };
+    }
+  },
+
+  // Verificar si el usuario ya hizo repost
+  userRepostedSong: async (songId, userId) => {
+    const [rows] = await promisePool.query(
+      'SELECT id FROM song_reposts WHERE song_id = ? AND user_id = ?',
       [songId, userId]
     );
     return rows.length > 0;

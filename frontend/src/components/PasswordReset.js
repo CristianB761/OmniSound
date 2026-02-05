@@ -15,49 +15,95 @@ import { ReactComponent as HidePasswordIcon } from '../icons/HidePasswordIcon.sv
 
 function PasswordReset() {
   const [email, setEmail] = useState(''); // Almacena el email ingresado
-  const [code, setCode] = useState(''); // Almacena el código de verificación ingresado
-  const [newPassword, setNewPassword] = useState(''); // Almacena la nueva contraseña ingresada
+  const [code, setCode] = useState(''); // Almacena el código de verificación
+  const [newPassword, setNewPassword] = useState(''); // Almacena la nueva contraseña
   const [isCodeSent, setIsCodeSent] = useState(false); // Indica si el código fue enviado
-  const [isCodeValid, setIsCodeValid] = useState(null); //Estado de validación: null = validar, true = válido, false = no válido
-  const [showPassword, setShowPassword] = useState(false); // Indica si se muestra la contraseña
+  const [isCodeValid, setIsCodeValid] = useState(null); // Estado de validación del código
+  const [showPassword, setShowPassword] = useState(false); // Controla visibilidad de contraseña
 
-  const navigate = useNavigate(); // Hook para navegar entre rutas
+  const navigate = useNavigate(); // Hook para navegación entre rutas
 
-  // Efecto para manejar el título de la pestaña y el shortcut de teclado
+  // Cambia el título de la pestaña del navegador cuando el componente se monta
   useEffect(() => {
-    // Cambia el título de la pestaña del navegador cuando el componente se monta
     document.title = "OmniSound - Restablecer contraseña";
 
+    // Configurar tecla ESC para cerrar
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        handleClose(); // ESC: Cierra el formulario
+        handleClose();
       }
     };
     // Agrega el event listener cuando el componente se monta
     document.addEventListener('keydown', handleKeyDown);
+
     // Limpia el event listener cuando el componente se desmonta
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []); // Array vacío significa que solo se ejecuta una vez
 
-  // Valida el formato del email usando una expresión regular
+  // Valida formato de email usando expresión regular
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Valida que el código tenga exactamente 6 dígitos
+  // Valida longitud del código (debe tener 6 dígitos)
   const isValidCode = (code) => {
     return code.length === 6;
   };
 
-  // Valida que la contraseña tenga al menos 8 caracteres
+  // Valida longitud mínima de contraseña
   const isValidPassword = (password) => {
     return password.length >= 8;
   };
 
-  // Función para enviar código de verificación
+  // Maneja cambios en el campo de email
+  const handleEmailChange = (e) => {
+    const value = e.target.value.replace(/\s/g, '');
+    setEmail(value);
+
+    // Resetea estado de código si email cambia
+    if (isCodeSent) {
+      setIsCodeSent(false);
+    }
+  };
+
+  // Maneja cambios en el campo de código
+  const handleCodeChange = (e) => {
+    const value = e.target.value
+      .replace(/\s/g, '')
+      .replace(/\D/g, '')
+      .slice(0, 6);
+    setCode(value);
+
+    // Resetea estado de validación
+    if (isCodeValid !== null) {
+      setIsCodeValid(null);
+    }
+  };
+
+  // Maneja cambios en el campo de nueva contraseña
+  const handleNewPasswordChange = (e) => {
+    setNewPassword(e.target.value);
+  };
+
+  // Alterna entre mostrar y ocultar la contraseña
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Navega de regreso a la página de inicio de sesión
+  const handleBack = () => {
+    navigate('/signin');
+  };
+
+  // Cierra formulario y redirige a la página principal
+  const handleClose = () => {
+    navigate('/foryou');
+  };
+
+  // Envía código de verificación al servidor
   const handleSendCode = async () => {
     if (email && isValidEmail(email) && !isCodeSent) {
       try {
@@ -69,7 +115,6 @@ function PasswordReset() {
 
         if (response.ok) {
           setIsCodeSent(true);
-          console.log('Código de restablecimiento enviado.');
         } else {
           const data = await response.json();
           console.error('Error al enviar código:', data.error);
@@ -80,35 +125,7 @@ function PasswordReset() {
     }
   };
 
-  // Función para manejar cambios en el email
-  const handleEmailChange = (e) => {
-    const value = e.target.value.replace(/\s/g, ''); // Elimina espacios
-    setEmail(value);
-    // Si se modifica el email, vuelve al estado de "Enviar código"
-    if (isCodeSent) {
-      setIsCodeSent(false);
-    }
-  };
-
-  // Función para manejar cambios en el código
-  const handleCodeChange = (e) => {
-    const value = e.target.value
-      .replace(/\s/g, '') // Elimina espacios
-      .replace(/\D/g, '') // Solo números
-      .slice(0, 6); // Máximo 6 dígitos
-    setCode(value);
-    // Si se modifica el código, vuelve al estado de "Validar código"
-    if (isCodeValid !== null) {
-      setIsCodeValid(null);
-    }
-  };
-
-  // Función para manejar cambios en la nueva contraseña
-  const handleNewPasswordChange = (e) => {
-    setNewPassword(e.target.value);
-  };
-
-  // Función para validar código de verificación
+  // Verifica código con el servidor
   const handleVerifyCode = async () => {
     if (isValidCode(code)) {
       try {
@@ -122,10 +139,8 @@ function PasswordReset() {
 
         if (response.ok) {
           setIsCodeValid(true);
-          console.log('Código válido');
         } else {
           setIsCodeValid(false);
-          console.log('Código no válido:', data.error);
         }
       } catch (error) {
         console.error('Error de red:', error);
@@ -134,22 +149,7 @@ function PasswordReset() {
     }
   };
 
-  // Función para alternar la visibilidad de la contraseña
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  // Función para redirigir al formulario inicia sesión
-  const handleBack = () => {
-    navigate('/signin');
-  };
-
-  // Función para redirigir a la página principal
-  const handleClose = () => {
-    navigate('/foryou');
-  };
-
-  // Función para restablecer contraseña
+  // Maneja el envío del formulario para restablecer contraseña
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -169,8 +169,6 @@ function PasswordReset() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Contraseña restablecida');
-        // Redirigir a Inicia sesión
         navigate('/signin');
       } else {
         console.error('Error al restablecer contraseña:', data.error);
@@ -180,17 +178,16 @@ function PasswordReset() {
     }
   };
 
-  // Determina si el formulario completo es válido
+  // Verifica si todo el formulario es válido
   const isFormValid = isValidEmail(email) && 
                       isValidCode(code) && 
                       isValidPassword(newPassword) && 
-                      isCodeValid === true; // Código debe estar validado como verdadero
+                      isCodeValid === true;
 
   return (
     <div className="passwordreset-page">
       <div className="passwordreset-container">
-
-        {/* Botón Volver a signin con ícono */}
+        {/* Botón Volver con ícono */}
         <button 
           className="passwordreset-back-button"
           onClick={handleBack}
@@ -200,7 +197,7 @@ function PasswordReset() {
           <BackIcon className="back-icon" />
         </button>
 
-        {/* Botón Cerrar formulario con ícono */}
+        {/* Botón Cerrar con ícono */}
         <button 
           className="passwordreset-close-button"
           onClick={handleClose}
@@ -212,14 +209,14 @@ function PasswordReset() {
 
         {/* Título del formulario */}
         <h1 className="passwordreset-title">Restablecer contraseña</h1>
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className="passwordreset-form" noValidate>
 
-          {/* Grupo de input para el email */}
+          {/* Grupo para email */}
           <div className="passwordreset-input-group">
             <span className="passwordreset-input-label">
               Correo electrónico:
             </span>
+            {/* Input email */}
             <input
               type="text"
               className="passwordreset-input"
@@ -228,7 +225,7 @@ function PasswordReset() {
               placeholder="Ingrese su correo electrónico"
             />
 
-            {/* Botón Enviar código - Cambia de ícono según el estado */}
+            {/* Botón Enviar código */}
             <button
               type="button"
               className="passwordreset-send-button"
@@ -240,11 +237,12 @@ function PasswordReset() {
             </button>
           </div>
 
-          {/* Grupo de input para el código de verificación */}
+          {/* Grupo para código de verificación */}
           <div className="passwordreset-input-group">
             <span className="passwordreset-input-label">
               Código de verificación:
             </span>
+            {/* Input código de verificación */}
             <input
               type="text"
               className={`passwordreset-input ${isCodeValid === false ? 'invalid-code' : ''}`}
@@ -254,7 +252,7 @@ function PasswordReset() {
               maxLength="6"
             />
 
-            {/* Botón de Validación - Cambia de ícono según el resultado */}
+            {/* Botón Validar código */}
             <button
               type="button"
               className="passwordreset-verify-button"
@@ -269,22 +267,23 @@ function PasswordReset() {
             </button>
           </div>
 
-          {/* Grupo de input para la contraseña */}
+          {/* Grupo para nueva contraseña */}
           <div className="passwordreset-input-group">
             <span className="passwordreset-input-label">
               Nueva contraseña:
             </span>
+            {/* Input nueva contraseña */}
             <input
-              type={showPassword ? "text" : "password"} // Cambia el tipo según la visibilidad
+              type={showPassword ? "text" : "password"}
               className="passwordreset-input"
               value={newPassword}
               onChange={handleNewPasswordChange}
               placeholder="Ingrese su nueva contraseña"
             />
 
-            {/* Botón de visibilidad */}
+            {/* Botón Mostrar/Ocultar contraseña */}
             <button
-              type="button" // Para que no envíe el formulario
+              type="button"
               className="passwordreset-visibility-button"
               onClick={togglePasswordVisibility}
               disabled={false}
@@ -294,20 +293,19 @@ function PasswordReset() {
             </button>
           </div>
 
-          {/* Botón Restablecer constraseña - Se habilita solo cuando es válido */}
+          {/* Botón Restablecer contraseña */}
           <button
             type="submit"
             className={`passwordreset-submit-button ${isFormValid ? 'enabled' : 'disabled'}`}
-            disabled={!isFormValid} // Deshabilitado cuando el formulario no es válido
+            disabled={!isFormValid}
           >
             Restablecer contraseña
           </button>
         </form>
 
-        {/* Pie de página */}
+        {/* Enlace Crea tu cuenta */}
         <div className="passwordreset-footer">
           <span>¿No tienes una cuenta?</span>
-          {/* Link de Crea tu cuenta */}
           <Link 
             to="/signup" 
             className="signup-link"

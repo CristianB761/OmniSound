@@ -10,60 +10,71 @@ import { ReactComponent as HidePasswordIcon } from '../icons/HidePasswordIcon.sv
 function SignIn() {
   const [email, setEmail] = useState(''); // Almacena el email ingresado
   const [password, setPassword] = useState(''); // Almacena la contraseña ingresada
-  const [showPassword, setShowPassword] = useState(false); // Indica si se muestra la contraseña
+  const [showPassword, setShowPassword] = useState(false); // Controla visibilidad de contraseña
 
-  const navigate = useNavigate(); // Hook para navegar entre rutas
+  const navigate = useNavigate(); // Hook para navegación entre rutas
 
-  // Efecto para manejar el título de la pestaña y el shortcut de teclado
+  // Cambia el título de la pestaña del navegador cuando el componente se monta
   useEffect(() => {
-    // Cambia el título de la pestaña del navegador cuando el componente se monta
     document.title = "OmniSound - Inicia sesión";
 
-    // Efecto para el shortcut de teclado
+    // Configurar tecla ESC para cerrar
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        handleClose(); // ESC: Cierra el formulario
+        handleClose();
       }
     };
     // Agrega el event listener cuando el componente se monta
     document.addEventListener('keydown', handleKeyDown);
+
     // Limpia el event listener cuando el componente se desmonta
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []); // Array vacío significa que solo se ejecuta una vez
 
-  // Función para redirigir a la página principal
+  // Cierra formulario y redirige a la página principal
   const handleClose = () => {
     navigate('/foryou');
   };
 
-  // Función para alternar la visibilidad de la contraseña
+  // Alterna entre mostrar y ocultar la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Función para manejar cambios en el email
+  // Maneja cambios en el campo de email
   const handleEmailChange = (e) => {
-    const value = e.target.value.replace(/\s/g, ''); // Elimina espacios
+    const value = e.target.value.replace(/\s/g, '');
     setEmail(value);
   };
 
-  // Función para manejar cambios en la contraseña
+  // Maneja cambios en el campo de contraseña
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
 
-  // Maneja el envío del formulario
-  const handleSubmit = async (event) => {
-    event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+  // Valida formato de email usando expresión regular
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-    // Valida que el formulario sea válido antes de enviar
+  // Valida longitud mínima de contraseña
+  const isValidPassword = (password) => {
+    return password.length >= 8;
+  };
+
+  // Maneja el envío del formulario de inicio de sesión
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     if (!isFormValid) {
       return;
     }
 
     try {
+      // Envía credenciales al servidor para autenticación
       const response = await fetch('http://localhost:5000/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -76,13 +87,9 @@ function SignIn() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Sesión iniciada:', data);
-
-        // Guardar el token y los datos del usuario en localStorage
+        // Almacena token y datos de usuario en localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-
-        // Redirigir a Para ti
         navigate('/foryou');
       } else {
         console.error('Error al iniciar sesión:', data.error);
@@ -92,25 +99,13 @@ function SignIn() {
     }
   };
 
-  // Valida el formato del email usando una expresión regular
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  // Valida que la contraseña tenga al menos 8 caracteres
-  const isValidPassword = (password) => {
-    return password.length >= 8;
-  };
-
-  // Determina si el formulario completo es válido
+  // Verifica si todo el formulario es válido
   const isFormValid = isValidEmail(email) && isValidPassword(password);
 
   return (
     <div className="signin-page">
       <div className="signin-container">
-
-        {/* Botón Cerrar formulario con ícono */}
+        {/* Botón Cerrar con ícono */}
         <button 
           className="signin-close-button" 
           onClick={handleClose}
@@ -122,14 +117,14 @@ function SignIn() {
 
         {/* Título del formulario */}
         <h1 className="signin-title">Inicia sesión</h1>
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className="signin-form">
 
-          {/* Grupo de input para el email */}
+          {/* Grupo para email */}
           <div className="signin-input-group">
             <span className="signin-input-label">
               Correo electrónico:
             </span>
+            {/* Input email */}
             <input
               type="text"
               className="signin-input"
@@ -139,22 +134,23 @@ function SignIn() {
             />
           </div>
 
-          {/* Grupo de input para la contraseña */}
+          {/* Grupo para contraseña */}
           <div className="signin-input-group">
             <span className="signin-input-label">
               Contraseña:
             </span>
+            {/* Input contraseña */}
             <input
-              type={showPassword ? "text" : "password"} // Cambia el tipo según la visibilidad
+              type={showPassword ? "text" : "password"}
               className="signin-input"
               value={password}
               onChange={handlePasswordChange}
               placeholder="Ingrese su contraseña"
             />
 
-            {/* Botón de visibilidad */}
+            {/* Botón Mostrar/Ocultar contraseña */}
             <button
-              type="button" // Para que no envíe el formulario
+              type="button"
               className="signin-visibility-button"
               onClick={togglePasswordVisibility}
               disabled={false}
@@ -164,7 +160,7 @@ function SignIn() {
             </button>
           </div>
 
-          {/* Link de Recuperar contraseña */}
+        {/* Enlace Restablecer contraseña */}
           <Link 
             to="/passwordreset" 
             className="passwordreset-link"
@@ -172,20 +168,19 @@ function SignIn() {
             ¿Olvidaste la contraseña?
           </Link>
 
-          {/* Botón Inicia sesión - Se habilita solo cuando es válido */}
+          {/* Botón Inicia sesión */}
           <button
             type="submit"
             className={`signin-submit-button ${isFormValid ? 'enabled' : 'disabled'}`}
-            disabled={!isFormValid} // Deshabilitado cuando el formulario no es válido
+            disabled={!isFormValid}
           >
             Inicia sesión
           </button>
         </form>
 
-        {/* Pie de página */}
+        {/* Enlace Crea tu cuenta */}
         <div className="signin-footer">
           <span>¿No tienes una cuenta?</span>
-          {/* Link de Crea tu cuenta */}
           <Link 
             to="/signup" 
             className="signup-link"

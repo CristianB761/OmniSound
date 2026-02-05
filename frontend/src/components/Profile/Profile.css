@@ -89,7 +89,40 @@
   background-color: teal;
 }
 
-/* Botón Compartir */
+/* Botón Seguir (para perfiles ajenos) */
+.profile-follow-button {
+  background-color: lightseagreen; /* Color verde para "Seguir" */
+  color: #121212;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px; /* Ancho mínimo consistente */
+}
+
+/* Estado "Siguiendo" */
+.profile-follow-button.following {
+  background-color: #1e1e1e;
+  color: teal;
+  border: 2px solid teal;
+}
+
+/* Efecto hover para botón "Seguir" */
+.profile-follow-button:hover:not(.following) {
+  background-color: teal;
+}
+
+/* Efecto hover para botón "Siguiendo" */
+.profile-follow-button.following:hover {
+  background-color: #2c2c2c;
+  color: lightseagreen;
+  border-color: lightseagreen;
+}
+
+/* Botón Compartir (común para ambos) */
 .profile-share-button {
   background-color: #1e1e1e;
   border: none;
@@ -268,4 +301,10 @@
   margin: 0;
   text-align: left;
   margin-top: 20px;
+}
+
+/* ===== ESTADO DESHABILITADO PARA BOTONES ===== */
+.profile-follow-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

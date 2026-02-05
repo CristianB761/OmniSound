@@ -14,20 +14,66 @@ import { ReactComponent as ProfileIcon } from '../icons/ProfileIcon.svg';
 import { ReactComponent as SignOutIconIcon } from '../icons/SignOutIcon.svg';
 
 function SideBar() {
+  const [searchValue, setSearchValue] = useState(''); // Almacena el valor del campo de búsqueda
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Indica si el usuario está autenticado
+  const [userData, setUserData] = useState(null); // Datos del usuario autenticado
+  const [loading, setLoading] = useState(true); // Estado de carga mientras se verifica la autenticación
+
   const searchInputRef = useRef(null); // Referencia para acceder al input de búsqueda directamente
   const location = useLocation(); // Hook para obtener la ruta actual
-  const [searchValue, setSearchValue] = useState(''); // Controla el texto del input
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación del usuario
-  const [userData, setUserData] = useState(null); // Datos del usuario autenticado
-  const [loading, setLoading] = useState(true); // Estado de carga para verificar autenticación
-
   const navigate = useNavigate(); // Hook para navegar entre páginas
 
-  // Efecto para manejar el shortcut de teclado y verificar autenticación
+  // Función que verifica si el usuario tiene una sesión activa
+  const checkAuthentication = async () => {
+    // Obtiene el token y datos del usuario desde el almacenamiento local
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+
+    if (token && storedUser) {
+      try {
+        // Realiza una petición al servidor para validar el token
+        const response = await fetch('http://localhost:5000/api/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include'
+        });
+
+        // Si la respuesta es OK, actualiza los datos del usuario
+        if (response.ok) {
+          const data = await response.json();
+          setIsAuthenticated(true);
+          setUserData(data.profile);
+        } else {
+          // Si la respuesta no es OK, elimina los datos y establece como no autenticado
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setIsAuthenticated(false);
+          setUserData(null);
+        }
+      } catch (error) {
+        // Si hay error en la petición, elimina los datos y establece como no autenticado
+        console.error('Error al verificar autenticación:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        setUserData(null);
+      }
+    } else {
+      // Si no hay token o datos de usuario, establece como no autenticado
+      setIsAuthenticated(false);
+      setUserData(null);
+    }
+    setLoading(false); // Finaliza el estado de carga
+  };
+
+  // Efecto para manejar el shortcut de teclado
   useEffect(() => {
     const handleKeyPress = (event) => {
       // Si se presiona 'S' (mayúscula o minúscula) y no están en un campo de texto,
       if ((event.key === 's' || event.key === 'S') && 
+          !event.shiftKey &&
           !event.target.matches('input, textarea, [contenteditable="true"]')) {
         event.preventDefault(); // Evita el comportamiento por defecto del navegador
         // Enfoca el campo de búsqueda
@@ -39,55 +85,13 @@ function SideBar() {
     // Agrega el event listener cuando el componente se monta
     document.addEventListener('keydown', handleKeyPress);
 
-    // Verificar autenticación al cargar el componente
-    checkAuthentication();
+    checkAuthentication(); // Verifica la autenticación al montar el componente
 
     // Limpia el event listener cuando el componente se desmonta
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
   }, []); // Array vacío significa que solo se ejecuta una vez
-
-  // Función para verificar autenticación con el backend
-  const checkAuthentication = async () => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (token && storedUser) {
-      try {
-        // Intentar obtener el perfil del usuario autenticado desde el backend
-        const response = await fetch('http://localhost:5000/api/profile', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          credentials: 'include'
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setIsAuthenticated(true);
-          setUserData(data.profile); // Actualizar con los datos del perfil desde el backend
-        } else {
-          // Si el token no es válido, limpiar el localStorage
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setIsAuthenticated(false);
-          setUserData(null);
-        }
-      } catch (error) {
-        console.error('Error al verificar autenticación:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setIsAuthenticated(false);
-        setUserData(null);
-      }
-    } else {
-      setIsAuthenticated(false);
-      setUserData(null);
-    }
-    setLoading(false);
-  };
 
   // Verifica si la ruta actual coincide con el path proporcionado
   const isActive = (path) => {
@@ -112,24 +116,24 @@ function SideBar() {
     }
   };
 
-  // Función para cerrar sesión
+  // Función para cerrar la sesión del usuario
   const handleSignOut = () => {
-    // Eliminar datos de autenticación del localStorage
+    // Elimina los datos de autenticación del almacenamiento local
     localStorage.removeItem('token');
     localStorage.removeItem('user');
 
-    // Actualizar estado de autenticación
+    // Actualiza el estado a no autenticado
     setIsAuthenticated(false);
     setUserData(null);
 
-    // Redirigir a la página principal
+    // Navega a la página principal
     navigate('/foryou');
 
-    // Recargar la página para actualizar el estado de la aplicación
+    // Recarga la página para limpiar cualquier estado residual
     window.location.reload();
   };
 
-  // Si está cargando, no mostrar el sidebar o mostrar un estado de carga
+  // Estado de carga mientras se verifica la autenticación
   if (loading) {
     return (
       <div className="sidebar">
@@ -141,7 +145,6 @@ function SideBar() {
 
   return (
     <div className="sidebar">
-
       {/* Título de la web site */}
       <h1 className="sidebar-title">OmniSound</h1>
       {/* Sección de búsqueda con input e ícono */}
@@ -156,7 +159,7 @@ function SideBar() {
         />
         <SearchIcon className="sidebar-search-icon" />
 
-        {/* Botón para limpiar input - Se muestra solo cuando hay texto */}
+        {/* Botón Limpiar input con ícono - Se muestra si hay texto */}
         {searchValue && (
           <button 
             className="sidebar-clean-input-button"
@@ -189,7 +192,7 @@ function SideBar() {
             <span>Explorar</span>
           </button>
 
-          {/* Botón Siguiendo con ícono - Solo se muestra si el usuario está autenticado */}
+          {/* Botón Siguiendo con ícono - Se muestra si el usuario está autenticado */}
           {isAuthenticated && (
             <button 
               className={`sidebar-following-button ${isActive('/following') ? 'active' : ''}`}
@@ -200,7 +203,7 @@ function SideBar() {
             </button>
           )}
 
-          {/* Botón Notificaciones con ícono - Solo se muestra si el usuario está autenticado */}
+          {/* Botón Notificaciones con ícono - Se muestra si el usuario está autenticado */}
           {isAuthenticated && (
             <button 
               className={`sidebar-notifications-button ${isActive('/notifications') ? 'active' : ''}`}
@@ -211,7 +214,7 @@ function SideBar() {
             </button>
           )}
 
-          {/* Botón Subir con ícono */}
+          {/* Botón Subir con ícono - Sin autenticación, te envia a Iniciar sesión */}
           <button 
             className={`sidebar-upload-button ${isActive('/upload') ? 'active' : ''}`}
             onClick={() => handleNavigation('/upload')}
@@ -220,15 +223,13 @@ function SideBar() {
             <span>Subir</span>
           </button>
 
-          {/* Botón Perfil con ícono */}
+          {/* Botón Perfil con ícono - Sin autenticación, te envia a Iniciar sesión */}
           <button 
             className={`sidebar-profile-button ${isActive('/profile') || (userData && isActive(`/${userData.username}`)) ? 'active' : ''}`}
             onClick={() => {
               if (isAuthenticated && userData) {
-                // Navegar al perfil del usuario autenticado
                 handleNavigation(`/${userData.username}`);
               } else {
-                // Navegar a la página de perfil general
                 handleNavigation('/profile');
               }
             }}
@@ -237,7 +238,7 @@ function SideBar() {
             <span>Perfil</span>
           </button>
 
-          {/* Botón Cerrar sesión con ícono - Solo se muestra si el usuario está autenticado */}
+          {/* Botón Cerrar sesión con ícono - Se muestra si el usuario está autenticado */}
           {isAuthenticated && (
             <button 
               className="sidebar-signout-button"
@@ -253,7 +254,7 @@ function SideBar() {
       {/* Línea divisoria visual */}
       <hr className="sidebar-divider" />
 
-      {/* Botones de autenticación - Solo se muestran si el usuario no está autenticado */}
+      {/* Botones de autenticación - Se muestran si el usuario no está autenticado*/}
       {!isAuthenticated && (
         <div className="sidebar-authn-buttons">
           {/* Botón Crea tu cuenta */}
